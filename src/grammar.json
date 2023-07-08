@@ -1,6 +1,6 @@
 {
   "name": "con4m",
-  "word": "ID",
+  "word": "identifier",
   "rules": {
     "source_file": {
       "type": "SEQ",
@@ -242,7 +242,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "ID"
+          "name": "identifier"
         },
         {
           "type": "REPEAT",
@@ -255,7 +255,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "ID"
+                "name": "identifier"
               }
             ]
           }
@@ -267,7 +267,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "ID"
+          "name": "identifier"
         },
         {
           "type": "CHOICE",
@@ -281,7 +281,7 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "ID"
+                  "name": "identifier"
                 }
               ]
             },
@@ -372,7 +372,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "ID"
+          "name": "identifier"
         },
         {
           "type": "STRING",
@@ -434,7 +434,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "ID"
+          "name": "identifier"
         },
         {
           "type": "SYMBOL",
@@ -492,7 +492,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "ID"
+          "name": "identifier"
         },
         {
           "type": "SEQ",
@@ -514,7 +514,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "ID"
+          "name": "identifier"
         },
         {
           "type": "REPEAT",
@@ -527,7 +527,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "ID"
+                "name": "identifier"
               }
             ]
           }
@@ -580,7 +580,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "ID"
+          "name": "identifier"
         },
         {
           "type": "REPEAT",
@@ -593,7 +593,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "ID"
+                "name": "identifier"
               }
             ]
           }
@@ -664,7 +664,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "ID"
+              "name": "identifier"
             }
           ]
         },
@@ -691,7 +691,7 @@
                     },
                     {
                       "type": "SYMBOL",
-                      "name": "ID"
+                      "name": "identifier"
                     },
                     {
                       "type": "STRING",
@@ -990,7 +990,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "ID"
+              "name": "identifier"
             },
             {
               "type": "STRING",
@@ -1050,7 +1050,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "ID"
+          "name": "identifier"
         }
       ]
     },
@@ -2184,7 +2184,7 @@
         }
       ]
     },
-    "ID": {
+    "identifier": {
       "type": "PATTERN",
       "value": "[_\\p{XID_Start}][_\\p{XID_Continue}]*"
     }

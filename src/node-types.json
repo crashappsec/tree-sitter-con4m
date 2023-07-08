@@ -46,11 +46,11 @@
       "required": false,
       "types": [
         {
-          "type": "ID",
+          "type": "call_actuals",
           "named": true
         },
         {
-          "type": "call_actuals",
+          "type": "identifier",
           "named": true
         },
         {
@@ -119,7 +119,7 @@
       "required": false,
       "types": [
         {
-          "type": "ID",
+          "type": "identifier",
           "named": true
         },
         {
@@ -300,15 +300,15 @@
       "required": true,
       "types": [
         {
-          "type": "ID",
-          "named": true
-        },
-        {
           "type": "body",
           "named": true
         },
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "identifier",
           "named": true
         }
       ]
@@ -517,7 +517,7 @@
       "required": true,
       "types": [
         {
-          "type": "ID",
+          "type": "identifier",
           "named": true
         }
       ]
@@ -652,7 +652,7 @@
       "required": true,
       "types": [
         {
-          "type": "ID",
+          "type": "identifier",
           "named": true
         },
         {
@@ -735,15 +735,15 @@
       "required": true,
       "types": [
         {
-          "type": "ID",
-          "named": true
-        },
-        {
           "type": "STR",
           "named": true
         },
         {
           "type": "body",
+          "named": true
+        },
+        {
+          "type": "identifier",
           "named": true
         }
       ]
@@ -884,7 +884,7 @@
       "required": true,
       "types": [
         {
-          "type": "ID",
+          "type": "identifier",
           "named": true
         },
         {
@@ -1058,10 +1058,6 @@
     "named": false
   },
   {
-    "type": "ID",
-    "named": true
-  },
-  {
     "type": "IpAddr",
     "named": false
   },
@@ -1164,6 +1160,10 @@
   {
     "type": "func",
     "named": false
+  },
+  {
+    "type": "identifier",
+    "named": true
   },
   {
     "type": "if",

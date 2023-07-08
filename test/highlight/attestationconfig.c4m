@@ -1,0 +1,8 @@
+func test() {
+# <- keyword
+#    ^ function
+  output := "foo"
+# ^ variable
+  return output
+  # <- keyword
+}

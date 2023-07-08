@@ -1,0 +1,149 @@
+==================
+Assignments
+==================
+
+use_color: false
+log_level: warn;
+aliases: ["generate", "spec", "specgen"]
+
+---
+
+(source_file
+ (toplevel_items
+  (assignment
+   (access_expr
+    (identifier))
+   (eq_op)
+   (expression
+    (unary_expr
+     (literal)))))
+ (NL)
+ (toplevel_items
+  (assignment
+   (access_expr
+    (identifier))
+   (eq_op)
+   (expression
+    (unary_expr
+     (access_expr
+      (identifier))))))
+ (NL)
+ (toplevel_items
+  (assignment
+   (access_expr
+    (identifier))
+   (eq_op)
+   (expression
+    (unary_expr
+     (literal
+      (list_literal
+       (expression
+        (unary_expr
+         (literal
+          (STR
+           (quoted_string)))))
+       (expression
+        (unary_expr
+         (literal
+          (STR
+           (quoted_string)))))
+       (expression
+        (unary_expr
+         (literal
+          (STR
+           (quoted_string)))))))))))
+(NL))
+
+==================
+Fields
+==================
+
+getopts {}
+command gen {
+    flag_choice language {
+            field_to_set: "language"
+            choices: ["nim", "none"]
+    }
+}
+
+---
+
+    (source_file
+      (toplevel_items
+        (section
+          (identifier)
+          (body)))
+      (NL)
+      (toplevel_items
+        (section
+          (identifier)
+          (identifier)
+          (body
+            (body_items
+              (section
+                (identifier)
+                (identifier)
+                (body
+                  (body_items
+                    (assignment
+                      (access_expr
+                        (identifier))
+                      (eq_op)
+                      (expression
+                        (unary_expr
+                          (literal
+                            (STR
+                              (quoted_string)))))))
+                  (NL)
+                  (body_items
+                    (assignment
+                      (access_expr
+                        (identifier))
+                      (eq_op)
+                      (expression
+                        (unary_expr
+                          (literal
+                            (list_literal
+                              (expression
+                                (unary_expr
+                                  (literal
+                                    (STR
+                                      (quoted_string)))))
+                              (expression
+                                (unary_expr
+                                  (literal
+                                    (STR
+                                      (quoted_string)))))))))))
+                  (NL))))
+            (NL))))
+      (NL))
+
+==============
+Literals
+==============
+
+args: (1, 6)
+
+---
+
+(source_file
+ (toplevel_items
+  (assignment
+   (access_expr
+    (identifier))
+   (eq_op)
+   (expression
+    (unary_expr
+     (literal
+      (tuple_literal
+       (expression
+        (unary_expr
+         (literal
+          (NUM
+           (integer)))))
+       (expression
+        (unary_expr
+         (literal
+          (NUM
+           (integer)))))))))))
+ (NL))

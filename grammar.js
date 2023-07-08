@@ -7,7 +7,7 @@ module.exports = grammar({
     $.line_continuation,
   ],
 
-  word: ($) => $.ID,
+  word: ($) => $.identifier,
 
   rules: {
     source_file: ($) =>
@@ -56,9 +56,10 @@ module.exports = grammar({
         $.expression
       ),
     eq_op: ($) => choice("=", ":", ":="),
-    enum_stmt: ($) => seq("enum", $.ID, repeat(seq(",", $.ID))),
+    enum_stmt: ($) => seq("enum", $.identifier, repeat(seq(",", $.identifier))),
 
-    section: ($) => seq($.ID, optional(choice($.STR, $.ID)), $.body),
+    section: ($) =>
+      seq($.identifier, optional(choice($.STR, $.identifier)), $.body),
     if_stmt: ($) =>
       seq(
         "if",
@@ -68,18 +69,28 @@ module.exports = grammar({
       ),
 
     for_stmt: ($) =>
-      seq("for", $.ID, "from", $.expression, "to", $.expression, $.body),
+      seq(
+        "for",
+        $.identifier,
+        "from",
+        $.expression,
+        "to",
+        $.expression,
+        $.body
+      ),
     continue_stmt: ($) => "continue",
     break_stmt: ($) => "break",
     return_stmt: ($) => seq("return", optional($.expression)),
-    funcdef: ($) => seq("func", $.ID, $.formal_spec, $.body),
+    funcdef: ($) => seq("func", $.identifier, $.formal_spec, $.body),
     formal_spec: ($) =>
       seq("(", optional($.param_spec), repeat(seq(",", $.param_spec)), ")"),
-    param_spec: ($) => seq($.ID, seq(":", $.type_spec)),
-    var_decl_item: ($) => seq($.ID, repeat(seq(",", $.ID)), ":", $.type_spec),
+    param_spec: ($) => seq($.identifier, seq(":", $.type_spec)),
+    var_decl_item: ($) =>
+      seq($.identifier, repeat(seq(",", $.identifier)), ":", $.type_spec),
     var_stmt: ($) =>
       seq("var", $.var_decl_item, repeat(seq(",", $.var_decl_item))),
-    export_stmt: ($) => seq("export", $.ID, repeat(seq(",", $.ID))),
+    export_stmt: ($) =>
+      seq("export", $.identifier, repeat(seq(",", $.identifier))),
 
     base_type_spec: ($) =>
       choice(
@@ -96,8 +107,8 @@ module.exports = grammar({
         "Date",
         "Time",
         "DateType",
-        seq("`", $.ID),
-        seq("typespec", optional(seq("[", "`", $.ID, "]"))),
+        seq("`", $.identifier),
+        seq("typespec", optional(seq("[", "`", $.identifier, "]"))),
         seq("tuple", "[", $.type_spec_r, ",", repeat1($.type_spec_r), "]"),
         seq("list", "[", $.type_spec_r, "]"),
         seq("dict", "[", $.type_spec_r, ",", $.type_spec_r, "]")
@@ -125,11 +136,11 @@ module.exports = grammar({
 
     access_expr: ($) =>
       seq(
-        choice($.ID, "$", $.paren_expr),
+        choice($.identifier, "$", $.paren_expr),
         repeat(choice($.member_expr, $.index_expr, $.call_actuals))
       ),
     paren_expr: ($) => seq("(", $.expression, ")"),
-    member_expr: ($) => seq(".", $.ID),
+    member_expr: ($) => seq(".", $.identifier),
     index_expr: ($) => seq("[", $.expression, "]"),
     call_actuals: ($) =>
       seq(
@@ -248,6 +259,6 @@ module.exports = grammar({
       choice(seq("'''", repeat(/./), "'''"), seq('"""', repeat(/./), '"""')),
 
     STR: ($) => choice($.quoted_string, $.multiline_string),
-    ID: ($) => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
+    identifier: ($) => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
   },
 });

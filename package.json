@@ -7,11 +7,38 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
+  "license": "Apache 2.0",
   "dependencies": {
     "nan": "^2.17.0"
   },
   "devDependencies": {
     "tree-sitter-cli": "^0.20.8"
-  }
+  },
+  "keywords": [
+    "parser",
+    "lexer"
+  ],
+  "author": "Theofilos Petsios",
+  "scripts": {
+    "build": "tree-sitter generate && node-gyp build",
+    "test": "tree-sitter test && script/parse-examples",
+    "parse": "tree-sitter parse",
+    "test-windows": "tree-sitter test"
+  },
+  "repository": "https://github.com/crashappsec/tree-sitter-con4m",
+  "tree-sitter": [
+    {
+      "scope": "source.con4m",
+      "file-types": [
+        "con4m",
+        "conform",
+        "c4m",
+        "c42spec"
+      ],
+      "highlights": [
+        "queries/highlights.scm"
+      ],
+      "injection-regex": "^(con4m|c42spec)$"
+    }
+  ]
 }
