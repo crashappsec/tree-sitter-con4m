@@ -16,7 +16,8 @@ aliases: ["generate", "spec", "specgen"]
    (eq_op)
    (expression
     (unary_expr
-     (literal)))))
+     (literal
+                (false))))))
  (NL)
  (toplevel_items
   (assignment

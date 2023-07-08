@@ -64,6 +64,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "funcdef"
+        },
+        {
+          "type": "SYMBOL",
           "name": "assignment"
         },
         {
@@ -433,12 +437,20 @@
           "value": "func"
         },
         {
-          "type": "SYMBOL",
-          "name": "identifier"
+          "type": "FIELD",
+          "name": "function",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
         },
         {
-          "type": "SYMBOL",
-          "name": "formal_spec"
+          "type": "FIELD",
+          "name": "function_spec",
+          "content": {
+            "type": "SYMBOL",
+            "name": "formal_spec"
+          }
         },
         {
           "type": "SYMBOL",
@@ -1149,13 +1161,31 @@
           "name": "other_lit"
         },
         {
+          "type": "SYMBOL",
+          "name": "true"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "false"
+        }
+      ]
+    },
+    "true": {
+      "type": "CHOICE",
+      "members": [
+        {
           "type": "STRING",
           "value": "true"
         },
         {
           "type": "STRING",
           "value": "True"
-        },
+        }
+      ]
+    },
+    "false": {
+      "type": "CHOICE",
+      "members": [
         {
           "type": "STRING",
           "value": "false"

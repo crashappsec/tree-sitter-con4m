@@ -1,8 +1,4 @@
-func test() {
-# <- keyword
-#    ^ function
-  output := "foo"
-# ^ variable
-  return output
-  # <- keyword
-}
+output: 4
+# <- variable
+#     ^ operator
+#       ^ number

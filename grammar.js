@@ -21,6 +21,7 @@ module.exports = grammar({
         $.if_stmt,
         $.for_stmt,
         $.var_stmt,
+        $.funcdef,
         $.assignment,
         $.expression,
         $.section
@@ -36,6 +37,7 @@ module.exports = grammar({
         ),
         "}"
       ),
+    // FIXME should break and continue be body items?
     body_items: ($) =>
       choice(
         $.if_stmt,
@@ -81,7 +83,13 @@ module.exports = grammar({
     continue_stmt: ($) => "continue",
     break_stmt: ($) => "break",
     return_stmt: ($) => seq("return", optional($.expression)),
-    funcdef: ($) => seq("func", $.identifier, $.formal_spec, $.body),
+    funcdef: ($) =>
+      seq(
+        "func",
+        field("function", $.identifier),
+        field("function_spec", $.formal_spec),
+        $.body
+      ),
     formal_spec: ($) =>
       seq("(", optional($.param_spec), repeat(seq(",", $.param_spec)), ")"),
     param_spec: ($) => seq($.identifier, seq(":", $.type_spec)),
@@ -158,12 +166,12 @@ module.exports = grammar({
         $.dict_literal,
         $.type_spec,
         $.other_lit,
-        "true",
-        "True",
-        "false",
-        "False"
+        $.true,
+        $.false
       ),
 
+    true: ($) => choice("true", "True"),
+    false: ($) => choice("false", "False"),
     tuple_literal: ($) =>
       seq("(", $.expression, repeat1(seq(",", $.expression)), ")"),
 

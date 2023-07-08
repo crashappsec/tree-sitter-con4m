@@ -292,6 +292,11 @@
     }
   },
   {
+    "type": "false",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "for_stmt",
     "named": true,
     "fields": {},
@@ -339,6 +344,42 @@
       "types": [
         {
           "type": "type_spec_r",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "funcdef",
+    "named": true,
+    "fields": {
+      "function": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "function_spec": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "formal_spec",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "body",
           "named": true
         }
       ]
@@ -437,7 +478,7 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "NUM",
@@ -452,11 +493,19 @@
           "named": true
         },
         {
+          "type": "false",
+          "named": true
+        },
+        {
           "type": "list_literal",
           "named": true
         },
         {
           "type": "other_lit",
+          "named": true
+        },
+        {
+          "type": "true",
           "named": true
         },
         {
@@ -789,6 +838,10 @@
           "named": true
         },
         {
+          "type": "funcdef",
+          "named": true
+        },
+        {
           "type": "if_stmt",
           "named": true
         },
@@ -802,6 +855,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "true",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "tuple_literal",
