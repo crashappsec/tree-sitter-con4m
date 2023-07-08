@@ -33,6 +33,10 @@
 ] @constant.builtin
 
 [
+  (other_lit)
+] @constant
+
+[
   (integer)
   (float)
 ] @number
@@ -40,6 +44,8 @@
 (comment) @comment
 (STR) @string
 (escape_sequence) @escape
+
+(base_type_spec) @type
 
 [
   "!="

@@ -1,9 +1,0 @@
-host workstation {
-      port: 8080
-      if env("CUSTOM_VAR") != "" {
-         ip: env("CUSTOM_VAR")
-      }
-      else {
-         ip: "10.12.1.10"
-      }
-}

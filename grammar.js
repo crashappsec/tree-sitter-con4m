@@ -159,7 +159,7 @@ module.exports = grammar({
 
     literal: ($) =>
       choice(
-        $.NUM,
+        $.number,
         $.STR,
         $.list_literal,
         $.tuple_literal,
@@ -209,12 +209,16 @@ module.exports = grammar({
 
     WS: ($) => repeat1(/[\u0020\u0009\u000D\u000A]/),
     NL: ($) => /\r?\n|\r/,
-    comment: ($) => token(seq(choice("#", "//"), /.*/)),
+    comment: ($) =>
+      token(
+        choice(
+          seq("//", /.*/),
+          seq("/*", /[^*]*\*+([^/*][^*]*\*+)*/, "/"),
+          seq(choice("#", "//"), /.*/)
+        )
+      ),
     line_continuation: ($) =>
       token(seq("\\", choice(seq(optional("\r"), "\n"), "\0"))),
-    LINECOMMENT: ($) => seq(choice("#", "//"), repeat(/[^\n]/)),
-    LONGCOMMENT: ($) => seq("/*", repeat(/./), "*/"),
-    //FIXME
     integer: ($) =>
       token(
         choice(
@@ -246,7 +250,7 @@ module.exports = grammar({
         )
       );
     },
-    NUM: ($) => choice($.integer, $.float),
+    number: ($) => choice($.integer, $.float),
     other_lit: ($) => seq("<<", repeat(/./), ">>"),
     quoted_string: ($) =>
       choice(

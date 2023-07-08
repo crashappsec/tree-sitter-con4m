@@ -1,0 +1,27 @@
+object host {
+  field ip {
+    type: IPAddr
+    require: true
+  }
+
+  field use_tls {
+    type: bool
+    default: true
+  }
+}
+
+# Stick this in a hidden variable, we'll use it for the command line too.
+
+valid_log_levels := ["verbose", "info", "warn", "error", "none"]
+root {
+  allow host {}
+  field use_color {
+    type: bool
+    require: false
+  }
+
+    field log_level {
+    choice: valid_log_levels
+    default: "info"
+  }
+}

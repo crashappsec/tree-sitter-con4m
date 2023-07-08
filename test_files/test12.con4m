@@ -1,5 +1,0 @@
-getopts {
-  show_doc_on_err:      true
-  show_doc_fferr:      false
-  show_doc_fferr2:    true
-}
