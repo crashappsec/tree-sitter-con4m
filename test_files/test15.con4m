@@ -1,0 +1,21 @@
+command gen {
+aliases: ["generate", "spec", "specgen"]
+           args: (1, high())
+           doc:  """
+           Auto-generates language-specific interface code, based on input spec files.
+           """
+           flag_choice language {
+field_to_set: "language"
+                choices: ["nim", "none"]
+                doc: """
+                The language for which to generate output. The default is 'none', which simply validates the spec as a valid c42 specification file.  Valid values are currently "none" (validates only), and "nim".  We expect to do Python, C and Go before 1.0.
+                """
+           }
+
+         flag_arg output_file {
+field_to_set: "output_file"
+                doc: """
+                Instead of writing to stdout, writes the generated code to the specified file.  Ignored if the language is set to 'none'.
+                """
+         }
+}
