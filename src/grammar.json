@@ -1038,40 +1038,48 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "identifier"
-            },
-            {
-              "type": "STRING",
-              "value": "$"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "paren_expr"
-            }
-          ]
-        },
-        {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "name",
           "content": {
             "type": "CHOICE",
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "member_expr"
+                "name": "identifier"
+              },
+              {
+                "type": "STRING",
+                "value": "$"
               },
               {
                 "type": "SYMBOL",
-                "name": "index_expr"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "call_actuals"
+                "name": "paren_expr"
               }
             ]
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "arguments",
+          "content": {
+            "type": "REPEAT",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "member_expr"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "index_expr"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "call_actuals"
+                }
+              ]
+            }
           }
         }
       ]

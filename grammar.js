@@ -181,8 +181,11 @@ module.exports = grammar({
 
     access_expr: ($) =>
       seq(
-        choice($.identifier, "$", $.paren_expr),
-        repeat(choice($.member_expr, $.index_expr, $.call_actuals))
+        field("name", choice($.identifier, "$", $.paren_expr)),
+        field(
+          "arguments",
+          repeat(choice($.member_expr, $.index_expr, $.call_actuals))
+        )
       ),
     paren_expr: ($) => seq("(", $.expression, ")"),
     member_expr: ($) => seq(".", $.identifier),
@@ -193,18 +196,6 @@ module.exports = grammar({
         optional(seq($.expression, repeat(seq(",", $.expression)))),
         ")"
       ),
-
-    call: ($) =>
-      prec(
-        PREC.call,
-        seq(
-          field("function", $.primary_expression),
-          field("arguments", choice($.generator_expression, $.argument_list))
-        )
-      ),
-
-    generator_expression: ($) =>
-      seq("(", field("body", $.expression), $._comprehension_clauses, ")"),
 
     literal: ($) =>
       choice(

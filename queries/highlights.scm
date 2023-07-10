@@ -1,4 +1,4 @@
-; Identifier naming conventions
+(identifier) @variable
 
 ((identifier) @constructor
  (#match? @constructor "^[A-Z]"))
@@ -19,10 +19,10 @@
 
 ; Function calls
 
-(function_declaration
-  name: (identifier) @function)
+(access_expr
+  name: (identifier) @function.call
+  arguments: (call_actuals) @type)
 
-(identifier) @variable
 
 ; sections
 
@@ -55,8 +55,11 @@
 (STR) @string
 (escape_sequence) @escape
 
+
 ["if" "elif" "else"] @conditional
-["for"] @repeat
+
+["for" "from" "to"] @repeat
+[(break_stmt) (continue_stmt)] @repeat
 ["(" ")" "[" "]" "{" "}"] @punctuation.bracket
 
 (base_type_spec) @type
@@ -79,11 +82,4 @@
   "or"
 ] @operator
 
-[
-  "elif"
-  "else"
-  "for"
-  "if"
-  "return"
-  "func"
-] @keyword
+(return_stmt) @keyword.return

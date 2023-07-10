@@ -4,11 +4,15 @@
   (dict_literal)
 ] @indent.begin
 
-((list) @indent.align
+((list_literal) @indent.align
  (#set! indent.open_delimiter "[")
  (#set! indent.close_delimiter "]")
 )
-((dictionary) @indent.align
+((tuple_literal) @indent.align
+ (#set! indent.open_delimiter "(")
+ (#set! indent.close_delimiter ")")
+)
+((dict_literal) @indent.align
  (#set! indent.open_delimiter "{")
  (#set! indent.close_delimiter "}")
 )
@@ -19,7 +23,7 @@
  (#set! indent.immediate 1))
 
 (if_stmt
-  condition: (parenthesized_expression) @indent.align
+  condition: (expression) @indent.align
   (#set! indent.open_delimiter "(")
   (#set! indent.close_delimiter ")")
   (#set! indent.avoid_last_matching_next 1)
