@@ -1,6 +1,8 @@
-// const PREC = {
-//   if_stmt: -1,
-// };
+const PREC = {
+  section_declaration: 1,
+  if_statement: 10, // Prefer ifelse over sections
+};
+const SEMICOLON = ";";
 
 module.exports = grammar({
   name: "con4m",
@@ -11,50 +13,56 @@ module.exports = grammar({
     $.line_continuation,
   ],
 
+  inline: ($) => [$._string_literal, $._top_level_declaration],
   word: ($) => $.identifier,
 
+  conflicts: ($) => [[$.if_statement, $.section_declaration]],
   rules: {
     source_file: ($) =>
       seq(
-        repeat(seq($.toplevel_items, repeat1(choice($.NL, ";")))),
-        optional($.toplevel_items)
-      ),
-
-    toplevel_items: ($) =>
-      choice(
-        $.if_stmt,
-        $.for_stmt,
-        $.var_stmt,
-        $.function_declaration,
-        $.assignment,
-        $.expression,
-        $.section
-      ),
-    body: ($) =>
-      seq(
-        "{",
-        optional(
-          seq(
-            repeat(seq($.body_items, repeat1(choice($.NL, ";")))),
-            optional($.body_items)
+        repeat(
+          choice(
+            // Unlike a Go compiler, we accept statements at top-level to enable
+            // parsing of partial code snippets in documentation (see #63).
+            seq($._statement, $.terminator),
+            seq($._top_level_declaration, $.terminator)
           )
         ),
-        "}"
+        optional(choice($._top_level_declaration, $._statement))
       ),
-    // FIXME should break and continue be body items?
-    body_items: ($) =>
+
+    _top_level_declaration: ($) =>
+      choice($.function_declaration, $.section_declaration),
+
+    _statement: ($) =>
       choice(
-        $.if_stmt,
-        $.for_stmt,
-        $.continue_stmt,
-        $.break_stmt,
-        $.return_stmt,
-        $.var_stmt,
-        $.assignment,
-        $.expression,
-        $.section
+        $.if_statement,
+        $.for_statement,
+        $.var_statement,
+        $.enum_statement,
+        $.assignment_statement
       ),
-    assignment: ($) =>
+
+    _simple_statement: ($) => choice($.expression, $.assignment_statement),
+
+    block: ($) =>
+      seq("{", optional(choice($._statement_list, $.section_declaration)), "}"),
+    section_declaration: ($) =>
+      prec(
+        PREC.section_declaration,
+        seq(
+          field("section_declaration_type", $.identifier),
+          field(
+            "section_declaration_name",
+            optional(choice($._string_literal, $.identifier))
+          ),
+          field("body", $.block)
+        )
+      ),
+    _statement_list: ($) =>
+      choice(seq($._statement, repeat(seq($.terminator, $._statement)))),
+
+    assignment_statement: ($) =>
       seq(
         $.access_expr,
         repeat(seq(",", $.access_expr)),
@@ -62,35 +70,31 @@ module.exports = grammar({
         $.expression
       ),
     eq_op: ($) => choice("=", ":", ":="),
-    enum_stmt: ($) => seq("enum", $.identifier, repeat(seq(",", $.identifier))),
+    enum_statement: ($) =>
+      seq("enum", $.identifier, repeat(seq(",", $.identifier))),
 
-    section: ($) =>
-      seq(
-        field("section_type", $.identifier),
-        field("section_name", optional(choice($.STR, $.identifier))),
-        field("body", $.body)
-      ),
-    if_stmt: ($) =>
-      seq(
-        "if",
-        seq(field("condition", $.expression), field("consequence", $.body)),
-        repeat(
-          seq(
-            "elif",
-            field("alternative", $.expression),
-            field("consequence", $.body)
-          )
-        ),
-        optional(
-          seq(
-            "else",
-            field("final", $.expression),
-            field("consequence", $.body)
-          )
+    if_statement: ($) =>
+      prec(
+        PREC.if_statement,
+        seq(
+          "if",
+          seq(field("condition", $.expression), field("consequence", $.block)),
+          repeat(field("alternative", $.elif_clause)),
+          optional(field("alternative", $.else_clause))
         )
       ),
+    elif_clause: ($) =>
+      seq(
+        "elif",
+        seq(field("condition", $.expression), field("consequence", $.block))
+      ),
+    else_clause: ($) =>
+      seq(
+        "else",
+        seq(field("condition", $.expression), field("consequence", $.block))
+      ),
 
-    for_stmt: ($) =>
+    for_statement: ($) =>
       seq(
         "for",
         $.identifier,
@@ -98,26 +102,23 @@ module.exports = grammar({
         $.expression,
         "to",
         $.expression,
-        $.body
+        $.block
       ),
-    continue_stmt: ($) => prec.left("continue"),
-    break_stmt: ($) => prec.left("break"),
-    return_stmt: ($) => seq("return", optional($.expression)),
     function_declaration: ($) =>
       seq(
         "func",
         field("name", $.identifier),
         field("parameters", $.formal_spec),
-        field("body", $.body)
+        field("body", $.block)
       ),
     formal_spec: ($) =>
       seq("(", optional($.param_spec), repeat(seq(",", $.param_spec)), ")"),
     param_spec: ($) => seq($.identifier, seq(":", $.type_spec)),
     var_decl_item: ($) =>
       seq($.identifier, repeat(seq(",", $.identifier)), ":", $.type_spec),
-    var_stmt: ($) =>
+    var_statement: ($) =>
       seq("var", $.var_decl_item, repeat(seq(",", $.var_decl_item))),
-    export_stmt: ($) =>
+    export_statement: ($) =>
       seq("export", $.identifier, repeat(seq(",", $.identifier))),
 
     base_type_spec: ($) =>
@@ -184,7 +185,7 @@ module.exports = grammar({
     literal: ($) =>
       choice(
         $.number,
-        $.STR,
+        $._string_literal,
         $.list_literal,
         $.tuple_literal,
         $.dict_literal,
@@ -231,8 +232,8 @@ module.exports = grammar({
     mul_expr: ($) => seq($.expression, "*", $.div_expr),
     div_expr: ($) => seq($.expression, "/", $.access_expr),
 
-    WS: ($) => repeat1(/[\u0020\u0009\u000D\u000A]/),
-    NL: ($) => /\r?\n|\r/,
+    newline: ($) => /\n/,
+    terminator: ($) => choice(repeat1($.newline), ";"),
     comment: ($) =>
       token(
         choice(
@@ -296,7 +297,7 @@ module.exports = grammar({
     multiline_string: ($) =>
       choice(seq("'''", repeat(/./), "'''"), seq('"""', repeat(/./), '"""')),
 
-    STR: ($) => choice($.quoted_string, $.multiline_string),
+    _string_literal: ($) => choice($.quoted_string, $.multiline_string),
     identifier: ($) => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
   },
 });

@@ -26,10 +26,10 @@
 
 ; sections
 
-(section
-  section_type: (identifier) @type.definition
-  section_name: (identifier) @field
-)
+; (section
+;   section_type: (identifier) @type.definition
+;   section_name: (identifier) @field
+; )
 
 ; Literals
 
@@ -38,9 +38,6 @@
   (false)
 ] @constant.builtin
 
-[
-  "return"
-] @keyword.return
 
 [
   (other_lit)
@@ -52,14 +49,13 @@
 ] @number
 
 (comment) @comment
-(STR) @string
+[(quoted_string) (multiline_string)] @string
 (escape_sequence) @escape
 
 
 ["if" "elif" "else"] @conditional
 
 ["for" "from" "to"] @repeat
-[(break_stmt) (continue_stmt)] @repeat
 ["(" ")" "[" "]" "{" "}"] @punctuation.bracket
 
 (base_type_spec) @type
@@ -81,5 +77,3 @@
   "and"
   "or"
 ] @operator
-
-(return_stmt) @keyword.return

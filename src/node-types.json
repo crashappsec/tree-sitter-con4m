@@ -1,24 +1,5 @@
 [
   {
-    "type": "STR",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "multiline_string",
-          "named": true
-        },
-        {
-          "type": "quoted_string",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "access_expr",
     "named": true,
     "fields": {
@@ -80,7 +61,7 @@
     }
   },
   {
-    "type": "assignment",
+    "type": "assignment_statement",
     "named": true,
     "fields": {},
     "children": {
@@ -122,7 +103,7 @@
     }
   },
   {
-    "type": "body",
+    "type": "block",
     "named": true,
     "fields": {},
     "children": {
@@ -130,67 +111,35 @@
       "required": false,
       "types": [
         {
-          "type": "NL",
+          "type": "assignment_statement",
           "named": true
         },
         {
-          "type": "body_items",
+          "type": "enum_statement",
+          "named": true
+        },
+        {
+          "type": "for_statement",
+          "named": true
+        },
+        {
+          "type": "if_statement",
+          "named": true
+        },
+        {
+          "type": "section_declaration",
+          "named": true
+        },
+        {
+          "type": "terminator",
+          "named": true
+        },
+        {
+          "type": "var_statement",
           "named": true
         }
       ]
     }
-  },
-  {
-    "type": "body_items",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "assignment",
-          "named": true
-        },
-        {
-          "type": "break_stmt",
-          "named": true
-        },
-        {
-          "type": "continue_stmt",
-          "named": true
-        },
-        {
-          "type": "expression",
-          "named": true
-        },
-        {
-          "type": "for_stmt",
-          "named": true
-        },
-        {
-          "type": "if_stmt",
-          "named": true
-        },
-        {
-          "type": "return_stmt",
-          "named": true
-        },
-        {
-          "type": "section",
-          "named": true
-        },
-        {
-          "type": "var_stmt",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "break_stmt",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "call_actuals",
@@ -206,11 +155,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "continue_stmt",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "dict_literal",
@@ -241,6 +185,73 @@
         },
         {
           "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "elif_clause",
+    "named": true,
+    "fields": {
+      "condition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "consequence": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "else_clause",
+    "named": true,
+    "fields": {
+      "condition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "consequence": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "enum_statement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
           "named": true
         }
       ]
@@ -299,7 +310,7 @@
     "fields": {}
   },
   {
-    "type": "for_stmt",
+    "type": "for_statement",
     "named": true,
     "fields": {},
     "children": {
@@ -307,7 +318,7 @@
       "required": true,
       "types": [
         {
-          "type": "body",
+          "type": "block",
           "named": true
         },
         {
@@ -360,7 +371,7 @@
         "required": true,
         "types": [
           {
-            "type": "body",
+            "type": "block",
             "named": true
           }
         ]
@@ -426,7 +437,7 @@
     }
   },
   {
-    "type": "if_stmt",
+    "type": "if_statement",
     "named": true,
     "fields": {
       "alternative": {
@@ -434,7 +445,11 @@
         "required": false,
         "types": [
           {
-            "type": "expression",
+            "type": "elif_clause",
+            "named": true
+          },
+          {
+            "type": "else_clause",
             "named": true
           }
         ]
@@ -450,21 +465,11 @@
         ]
       },
       "consequence": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "body",
-            "named": true
-          }
-        ]
-      },
-      "final": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "expression",
+            "type": "block",
             "named": true
           }
         ]
@@ -510,10 +515,6 @@
       "required": true,
       "types": [
         {
-          "type": "STR",
-          "named": true
-        },
-        {
           "type": "dict_literal",
           "named": true
         },
@@ -526,11 +527,19 @@
           "named": true
         },
         {
+          "type": "multiline_string",
+          "named": true
+        },
+        {
           "type": "number",
           "named": true
         },
         {
           "type": "other_lit",
+          "named": true
+        },
+        {
+          "type": "quoted_string",
           "named": true
         },
         {
@@ -809,22 +818,7 @@
     }
   },
   {
-    "type": "return_stmt",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "section",
+    "type": "section_declaration",
     "named": true,
     "fields": {
       "body": {
@@ -832,26 +826,30 @@
         "required": true,
         "types": [
           {
-            "type": "body",
+            "type": "block",
             "named": true
           }
         ]
       },
-      "section_name": {
+      "section_declaration_name": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "STR",
+            "type": "identifier",
             "named": true
           },
           {
-            "type": "identifier",
+            "type": "multiline_string",
+            "named": true
+          },
+          {
+            "type": "quoted_string",
             "named": true
           }
         ]
       },
-      "section_type": {
+      "section_declaration_type": {
         "multiple": false,
         "required": true,
         "types": [
@@ -872,34 +870,15 @@
       "required": false,
       "types": [
         {
-          "type": "NL",
+          "type": "assignment_statement",
           "named": true
         },
         {
-          "type": "toplevel_items",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "toplevel_items",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "assignment",
+          "type": "enum_statement",
           "named": true
         },
         {
-          "type": "expression",
-          "named": true
-        },
-        {
-          "type": "for_stmt",
+          "type": "for_statement",
           "named": true
         },
         {
@@ -907,15 +886,34 @@
           "named": true
         },
         {
-          "type": "if_stmt",
+          "type": "if_statement",
           "named": true
         },
         {
-          "type": "section",
+          "type": "section_declaration",
           "named": true
         },
         {
-          "type": "var_stmt",
+          "type": "terminator",
+          "named": true
+        },
+        {
+          "type": "var_statement",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "terminator",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "newline",
           "named": true
         }
       ]
@@ -1018,7 +1016,7 @@
     }
   },
   {
-    "type": "var_stmt",
+    "type": "var_statement",
     "named": true,
     "fields": {},
     "children": {
@@ -1169,10 +1167,6 @@
     "named": false
   },
   {
-    "type": "NL",
-    "named": true
-  },
-  {
     "type": "Size",
     "named": false
   },
@@ -1205,20 +1199,12 @@
     "named": false
   },
   {
-    "type": "break",
-    "named": false
-  },
-  {
     "type": "char",
     "named": false
   },
   {
     "type": "comment",
     "named": true
-  },
-  {
-    "type": "continue",
-    "named": false
   },
   {
     "type": "dict",
@@ -1285,12 +1271,12 @@
     "named": true
   },
   {
-    "type": "line_continuation",
-    "named": true
-  },
-  {
     "type": "list",
     "named": false
+  },
+  {
+    "type": "newline",
+    "named": true
   },
   {
     "type": "not",
@@ -1298,10 +1284,6 @@
   },
   {
     "type": "or",
-    "named": false
-  },
-  {
-    "type": "return",
     "named": false
   },
   {
