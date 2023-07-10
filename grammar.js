@@ -1,22 +1,6 @@
-// FIXME add support for those
-const PREC = {
-  conditional: -1,
-
-  parenthesized_expression: 1,
-  or: 10,
-  and: 11,
-  not: 12,
-  compare: 13,
-  bitwise_or: 14,
-  bitwise_and: 15,
-  xor: 16,
-  shift: 17,
-  plus: 18,
-  times: 19,
-  unary: 20,
-  power: 21,
-  call: 22,
-};
+// const PREC = {
+//   if_stmt: -1,
+// };
 
 module.exports = grammar({
   name: "con4m",
@@ -116,8 +100,8 @@ module.exports = grammar({
         $.expression,
         $.body
       ),
-    continue_stmt: ($) => "continue",
-    break_stmt: ($) => "break",
+    continue_stmt: ($) => prec.left("continue"),
+    break_stmt: ($) => prec.left("break"),
     return_stmt: ($) => seq("return", optional($.expression)),
     function_declaration: ($) =>
       seq(
@@ -296,16 +280,18 @@ module.exports = grammar({
       choice(
         seq('"', '"'),
         seq("'", "'"),
-        seq('"', $._quoted_string_content, '"'),
-        seq("'", $._quoted_string_content, "'")
+        seq('"', $._quoted_string_content_double, '"'),
+        seq("'", $._quoted_string_content_single, "'")
       ),
 
     escape_sequence: ($) =>
       token.immediate(seq("\\", /(\"|\'|\\|\/|b|f|n|r|t|u)/)),
 
     //  Use repeat1 here instead of repeat, as treesitter doesn't support matching with empty string
-    _quoted_string_content: ($) =>
-      repeat1(choice(token.immediate(/[^\\"\'\n]+/), $.escape_sequence)),
+    _quoted_string_content_double: ($) =>
+      repeat1(choice(token.immediate(/[^\\"\n]+/), $.escape_sequence)),
+    _quoted_string_content_single: ($) =>
+      repeat1(choice(token.immediate(/[^\'\n]+/), $.escape_sequence)),
 
     multiline_string: ($) =>
       choice(seq("'''", repeat(/./), "'''"), seq('"""', repeat(/./), '"""')),

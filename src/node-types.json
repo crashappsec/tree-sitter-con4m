@@ -188,6 +188,11 @@
     }
   },
   {
+    "type": "break_stmt",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "call_actuals",
     "named": true,
     "fields": {},
@@ -201,6 +206,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "continue_stmt",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "dict_literal",
@@ -1195,8 +1205,8 @@
     "named": false
   },
   {
-    "type": "break_stmt",
-    "named": true
+    "type": "break",
+    "named": false
   },
   {
     "type": "char",
@@ -1207,8 +1217,8 @@
     "named": true
   },
   {
-    "type": "continue_stmt",
-    "named": true
+    "type": "continue",
+    "named": false
   },
   {
     "type": "dict",
@@ -1240,11 +1250,11 @@
   },
   {
     "type": "float",
-    "named": true
+    "named": false
   },
   {
     "type": "float",
-    "named": false
+    "named": true
   },
   {
     "type": "for",
