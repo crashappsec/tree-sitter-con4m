@@ -140,11 +140,11 @@ args: (1, 6)
        (expression
         (unary_expr
          (literal
-          (NUM
+          (number
            (integer)))))
        (expression
         (unary_expr
          (literal
-          (NUM
+          (number
            (integer)))))))))))
  (NL))

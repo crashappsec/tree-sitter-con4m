@@ -1,3 +1,23 @@
+// FIXME add support for those
+const PREC = {
+  conditional: -1,
+
+  parenthesized_expression: 1,
+  or: 10,
+  and: 11,
+  not: 12,
+  compare: 13,
+  bitwise_or: 14,
+  bitwise_and: 15,
+  xor: 16,
+  shift: 17,
+  plus: 18,
+  times: 19,
+  unary: 20,
+  power: 21,
+  call: 22,
+};
+
 module.exports = grammar({
   name: "con4m",
 
@@ -21,7 +41,7 @@ module.exports = grammar({
         $.if_stmt,
         $.for_stmt,
         $.var_stmt,
-        $.funcdef,
+        $.function_declaration,
         $.assignment,
         $.expression,
         $.section
@@ -61,13 +81,29 @@ module.exports = grammar({
     enum_stmt: ($) => seq("enum", $.identifier, repeat(seq(",", $.identifier))),
 
     section: ($) =>
-      seq($.identifier, optional(choice($.STR, $.identifier)), $.body),
+      seq(
+        field("section_type", $.identifier),
+        field("section_name", optional(choice($.STR, $.identifier))),
+        field("body", $.body)
+      ),
     if_stmt: ($) =>
       seq(
         "if",
-        seq($.expression, $.body),
-        repeat(seq("elif", $.expression, $.body)),
-        optional(seq("else", $.expression, $.body))
+        seq(field("condition", $.expression), field("consequence", $.body)),
+        repeat(
+          seq(
+            "elif",
+            field("alternative", $.expression),
+            field("consequence", $.body)
+          )
+        ),
+        optional(
+          seq(
+            "else",
+            field("final", $.expression),
+            field("consequence", $.body)
+          )
+        )
       ),
 
     for_stmt: ($) =>
@@ -83,12 +119,12 @@ module.exports = grammar({
     continue_stmt: ($) => "continue",
     break_stmt: ($) => "break",
     return_stmt: ($) => seq("return", optional($.expression)),
-    funcdef: ($) =>
+    function_declaration: ($) =>
       seq(
         "func",
-        field("function", $.identifier),
-        field("function_spec", $.formal_spec),
-        $.body
+        field("name", $.identifier),
+        field("parameters", $.formal_spec),
+        field("body", $.body)
       ),
     formal_spec: ($) =>
       seq("(", optional($.param_spec), repeat(seq(",", $.param_spec)), ")"),
@@ -136,6 +172,7 @@ module.exports = grammar({
         "->",
         $.type_spec_r
       ),
+
     expression: ($) => choice($.unary_expr, $.not_expr, $.or_expr),
     unary_expr: ($) =>
       seq(optional(choice("+", "-")), choice($.access_expr, $.literal)),
@@ -156,6 +193,18 @@ module.exports = grammar({
         optional(seq($.expression, repeat(seq(",", $.expression)))),
         ")"
       ),
+
+    call: ($) =>
+      prec(
+        PREC.call,
+        seq(
+          field("function", $.primary_expression),
+          field("arguments", choice($.generator_expression, $.argument_list))
+        )
+      ),
+
+    generator_expression: ($) =>
+      seq("(", field("body", $.expression), $._comprehension_clauses, ")"),
 
     literal: ($) =>
       choice(

@@ -13,3 +13,9 @@
 - `tree-sitter generate` will generate the C code required to parse con4m
 - Try the parser out: `tree-sitter parse test_files/test1.con4m`
 - See debug graph: `tree-sitter parse -D test_files/test1.con4m`
+
+# Updating highlights
+
+See
+
+- https://github.com/nvim-treesitter/nvim-treesitter/blob/master/CONTRIBUTING.md

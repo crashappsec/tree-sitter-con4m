@@ -14,14 +14,34 @@ object host {
 
 valid_log_levels := ["verbose", "info", "warn", "error", "none"]
 root {
-  allow host {}
-  field use_color {
-    type: bool
-    require: false
-  }
+    allow host {}
+    field use_color {
+        type: bool
+        require: false
+    }
 
     field log_level {
-    choice: valid_log_levels
-    default: "info"
-  }
+        choice: valid_log_levels
+        default: "info"
+    }
+}
+
+text := run("ls -l")
+echo(text)
+
+path := env("PATH")
+desired := "~"
+found = false
+parts := split(path, ":")
+for i from 0 to len(parts) {
+    if parts[i] == "" {
+        continue
+    }
+    elif parts[i] == desired {
+        break
+    }
+    echo ("Not what I'm looking for: ", parts[i])
+}
+if found {
+    echo("Found it!")
 }

@@ -1,24 +1,5 @@
 [
   {
-    "type": "NUM",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "float",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "STR",
     "named": true,
     "fields": {},
@@ -350,10 +331,20 @@
     }
   },
   {
-    "type": "funcdef",
+    "type": "function_declaration",
     "named": true,
     "fields": {
-      "function": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "body",
+            "named": true
+          }
+        ]
+      },
+      "name": {
         "multiple": false,
         "required": true,
         "types": [
@@ -363,7 +354,7 @@
           }
         ]
       },
-      "function_spec": {
+      "parameters": {
         "multiple": false,
         "required": true,
         "types": [
@@ -373,16 +364,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "body",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -426,20 +407,47 @@
   {
     "type": "if_stmt",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "body",
-          "named": true
-        },
-        {
-          "type": "expression",
-          "named": true
-        }
-      ]
+    "fields": {
+      "alternative": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "condition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "consequence": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "body",
+            "named": true
+          }
+        ]
+      },
+      "final": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -481,10 +489,6 @@
       "required": true,
       "types": [
         {
-          "type": "NUM",
-          "named": true
-        },
-        {
           "type": "STR",
           "named": true
         },
@@ -498,6 +502,10 @@
         },
         {
           "type": "list_literal",
+          "named": true
+        },
+        {
+          "type": "number",
           "named": true
         },
         {
@@ -669,6 +677,25 @@
     }
   },
   {
+    "type": "number",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "float",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "or_expr",
     "named": true,
     "fields": {},
@@ -778,24 +805,41 @@
   {
     "type": "section",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "STR",
-          "named": true
-        },
-        {
-          "type": "body",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        }
-      ]
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "body",
+            "named": true
+          }
+        ]
+      },
+      "section_name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "STR",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "section_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -838,7 +882,7 @@
           "named": true
         },
         {
-          "type": "funcdef",
+          "type": "function_declaration",
           "named": true
         },
         {
@@ -980,10 +1024,6 @@
     "named": false
   },
   {
-    "type": "#",
-    "named": false
-  },
-  {
     "type": "$",
     "named": false
   },
@@ -1016,10 +1056,6 @@
     "named": false
   },
   {
-    "type": "*/",
-    "named": false
-  },
-  {
     "type": "+",
     "named": false
   },
@@ -1041,14 +1077,6 @@
   },
   {
     "type": "/",
-    "named": false
-  },
-  {
-    "type": "/*",
-    "named": false
-  },
-  {
-    "type": "//",
     "named": false
   },
   {
