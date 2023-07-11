@@ -36,11 +36,9 @@ parts := split(path, ":")
 for i from 0 to len(parts) {
     if parts[i] == "" {
         continue
-    }
-    elif parts[i] == "desired" {
+    } elif parts[i] == "desired" {
         break
-    }
-    echo("Not what I'm looking for: ")
+    } echo("Not what I'm looking for: ")
 }
 if found {
     echo("Found it!")

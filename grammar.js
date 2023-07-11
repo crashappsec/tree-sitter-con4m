@@ -1,4 +1,6 @@
 const PREC = {
+    // hack to allow newlines between if / elif declarations without colliding
+    // with sections
     if_elif_else: 13,
     if_elif: 12,
     if_else: 11,
@@ -85,8 +87,8 @@ module.exports = grammar({
   rules: {
     source_file: ($) =>
       seq(
-        repeat(seq(choice($._top_level_item), terminator)),
-        optional(choice($._top_level_item))
+        repeat(seq($._top_level_item, repeat1(terminator))),
+        optional($._top_level_item)
       ),
 
     _top_level_item: ($) => choice($._statement, $._declaration),
@@ -104,8 +106,7 @@ module.exports = grammar({
         $.break_statement,
         $.continue_statement,
         $.block,
-        $.section,
-        $.empty_statement
+        $.section
       ),
 
     unary_expression: ($) =>
@@ -147,7 +148,7 @@ module.exports = grammar({
         seq(
           field("operand", $._expression),
           ".",
-          field("field", $._field_identifier)
+          field("field", $.field_identifier)
         )
       ),
 
@@ -379,7 +380,6 @@ module.exports = grammar({
     imaginary_literal: ($) => token(imaginaryLiteral),
     true: ($) => choice("true", "True"),
     false: ($) => choice("false", "False"),
-    empty_statement: ($) => ";",
     continue_statement: ($) => "continue",
     break_statement: ($) => "break",
     return_statement: ($) => seq("return", optional($.expression_list)),
@@ -406,7 +406,7 @@ module.exports = grammar({
     string_literal: ($) => choice($.quoted_string, $.multiline_string),
 
     identifier: ($) => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
-    _field_identifier: ($) => alias($.identifier, $.field_identifier),
+    field_identifier: ($) => alias($.identifier, $.field_identifier),
   },
 });
 

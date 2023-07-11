@@ -11,26 +11,24 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "_top_level_item"
-                  }
-                ]
+                "type": "SYMBOL",
+                "name": "_top_level_item"
               },
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": "\n"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": ";"
-                  }
-                ]
+                "type": "REPEAT1",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "\n"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": ";"
+                    }
+                  ]
+                }
               }
             ]
           }
@@ -39,13 +37,8 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "_top_level_item"
-                }
-              ]
+              "type": "SYMBOL",
+              "name": "_top_level_item"
             },
             {
               "type": "BLANK"
@@ -122,10 +115,6 @@
         {
           "type": "SYMBOL",
           "name": "section"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "empty_statement"
         }
       ]
     },
@@ -268,7 +257,7 @@
             "name": "field",
             "content": {
               "type": "SYMBOL",
-              "name": "_field_identifier"
+              "name": "field_identifier"
             }
           }
         ]
@@ -3966,10 +3955,6 @@
         }
       ]
     },
-    "empty_statement": {
-      "type": "STRING",
-      "value": ";"
-    },
     "continue_statement": {
       "type": "STRING",
       "value": "continue"
@@ -4180,7 +4165,7 @@
       "type": "PATTERN",
       "value": "[_\\p{XID_Start}][_\\p{XID_Continue}]*"
     },
-    "_field_identifier": {
+    "field_identifier": {
       "type": "ALIAS",
       "content": {
         "type": "SYMBOL",

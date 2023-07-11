@@ -1,0 +1,11 @@
+parts := split(env("PATH"), ":")
+
+#comment
+
+if parts[0] == "" {
+    echo("foo")
+} elif parts[0] == "desired" {
+    echo("desired")
+}
+# foo
+echo("Not what I'm looking for: ", parts[0])
