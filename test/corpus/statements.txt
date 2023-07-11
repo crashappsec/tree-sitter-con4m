@@ -253,20 +253,3 @@ if condition {
             (NL))))
       (NL))
 
-
-===================
-if elif statements2
-===================
-
-condition: false
-condition2: true
-if condition {
-   default_compiler_flags: "-DDEBUG -O0"
-} elif condition2 {
-    default_compiler_flags: "foo"
-} else {
-  default_compiler_flags: "-fPIC"
-}
-
-
----

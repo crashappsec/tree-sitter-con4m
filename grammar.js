@@ -1,6 +1,74 @@
-// const PREC = {
-//   if_stmt: -1,
-// };
+const PREC = {
+    primary: 7,
+    unary: 6,
+    multiplicative: 5,
+    additive: 4,
+    comparative: 3,
+    and: 2,
+    or: 1,
+    composite_literal: -1,
+  },
+  multiplicative_operators = ["*", "/", "%", "<<", ">>", "&", "&^"],
+  additive_operators = ["+", "-", "|", "^"],
+  comparative_operators = ["==", "!=", "<", "<=", ">", ">="],
+  assignment_operators = multiplicative_operators
+    .concat(additive_operators)
+    .map((operator) => operator + "=")
+    .concat("="),
+  newline = "\n",
+  terminator = choice(newline, ";");
+(hexDigit = /[0-9a-fA-F]/),
+  (octalDigit = /[0-7]/),
+  (decimalDigit = /[0-9]/),
+  (binaryDigit = /[01]/),
+  (hexDigits = seq(hexDigit, repeat(seq(optional("_"), hexDigit)))),
+  (octalDigits = seq(octalDigit, repeat(seq(optional("_"), octalDigit)))),
+  (decimalDigits = seq(decimalDigit, repeat(seq(optional("_"), decimalDigit)))),
+  (binaryDigits = seq(binaryDigit, repeat(seq(optional("_"), binaryDigit)))),
+  (hexLiteral = seq("0", choice("x", "X"), optional("_"), hexDigits)),
+  (octalLiteral = seq(
+    "0",
+    optional(choice("o", "O")),
+    optional("_"),
+    octalDigits
+  )),
+  (decimalLiteral = choice(
+    "0",
+    seq(/[1-9]/, optional(seq(optional("_"), decimalDigits)))
+  )),
+  (binaryLiteral = seq("0", choice("b", "B"), optional("_"), binaryDigits)),
+  (intLiteral = choice(
+    binaryLiteral,
+    decimalLiteral,
+    octalLiteral,
+    hexLiteral
+  )),
+  (decimalExponent = seq(
+    choice("e", "E"),
+    optional(choice("+", "-")),
+    decimalDigits
+  )),
+  (decimalFloatLiteral = choice(
+    seq(decimalDigits, ".", optional(decimalDigits), optional(decimalExponent)),
+    seq(decimalDigits, decimalExponent),
+    seq(".", decimalDigits, optional(decimalExponent))
+  )),
+  (hexExponent = seq(
+    choice("p", "P"),
+    optional(choice("+", "-")),
+    decimalDigits
+  )),
+  (hexMantissa = choice(
+    seq(optional("_"), hexDigits, ".", optional(hexDigits)),
+    seq(optional("_"), hexDigits),
+    seq(".", hexDigits)
+  )),
+  (hexFloatLiteral = seq("0", choice("x", "X"), hexMantissa, hexExponent)),
+  (floatLiteral = choice(decimalFloatLiteral, hexFloatLiteral)),
+  (imaginaryLiteral = seq(
+    choice(decimalDigits, intLiteral, floatLiteral),
+    "i"
+  ));
 
 module.exports = grammar({
   name: "con4m",
@@ -13,226 +81,87 @@ module.exports = grammar({
 
   word: ($) => $.identifier,
 
+  supertypes: ($) => [$._expression, $._statement, $._simple_statement],
   rules: {
     source_file: ($) =>
       seq(
-        repeat(seq($.toplevel_items, repeat1(choice($.NL, ";")))),
-        optional($.toplevel_items)
+        repeat(seq(choice($._statement), terminator)),
+        optional(choice($._statement))
       ),
 
-    toplevel_items: ($) =>
+    _statement: ($) =>
       choice(
-        $.if_stmt,
-        $.for_stmt,
-        $.var_stmt,
-        $.function_declaration,
-        $.assignment,
-        $.expression,
-        $.section
+        $.return_statement,
+        $.if_statement,
+        $.assignment_statement,
+        $.break_statement,
+        $.continue_statement
       ),
-    body: ($) =>
-      seq(
-        "{",
-        optional(
-          seq(
-            repeat(seq($.body_items, repeat1(choice($.NL, ";")))),
-            optional($.body_items)
-          )
-        ),
-        "}"
-      ),
-    // FIXME should break and continue be body items?
-    body_items: ($) =>
-      choice(
-        $.if_stmt,
-        $.for_stmt,
-        $.continue_stmt,
-        $.break_stmt,
-        $.return_stmt,
-        $.var_stmt,
-        $.assignment,
-        $.expression,
-        $.section
-      ),
-    assignment: ($) =>
-      seq(
-        $.access_expr,
-        repeat(seq(",", $.access_expr)),
-        $.eq_op,
-        $.expression
-      ),
-    eq_op: ($) => choice("=", ":", ":="),
-    enum_stmt: ($) => seq("enum", $.identifier, repeat(seq(",", $.identifier))),
 
-    section: ($) =>
-      seq(
-        field("section_type", $.identifier),
-        field("section_name", optional(choice($.STR, $.identifier))),
-        field("body", $.body)
-      ),
-    if_stmt: ($) =>
-      seq(
-        "if",
-        seq(field("condition", $.expression), field("consequence", $.body)),
-        repeat(
-          seq(
-            "elif",
-            field("alternative", $.expression),
-            field("consequence", $.body)
-          )
-        ),
-        optional(
-          seq(
-            "else",
-            field("final", $.expression),
-            field("consequence", $.body)
-          )
+    _simple_statement: ($) => choice($._expression, $.assignment_statement),
+
+    unary_expression: ($) =>
+      prec(
+        PREC.unary,
+        seq(
+          // TODO add !
+          field("operator", choice("+", "-")),
+          field("operand", $._expression)
         )
       ),
-
-    for_stmt: ($) =>
-      seq(
-        "for",
+    _expression: ($) =>
+      choice(
+        $.unary_expression,
+        // $.call_expression,
         $.identifier,
-        "from",
-        $.expression,
-        "to",
-        $.expression,
-        $.body
-      ),
-    continue_stmt: ($) => prec.left("continue"),
-    break_stmt: ($) => prec.left("break"),
-    return_stmt: ($) => seq("return", optional($.expression)),
-    function_declaration: ($) =>
-      seq(
-        "func",
-        field("name", $.identifier),
-        field("parameters", $.formal_spec),
-        field("body", $.body)
-      ),
-    formal_spec: ($) =>
-      seq("(", optional($.param_spec), repeat(seq(",", $.param_spec)), ")"),
-    param_spec: ($) => seq($.identifier, seq(":", $.type_spec)),
-    var_decl_item: ($) =>
-      seq($.identifier, repeat(seq(",", $.identifier)), ":", $.type_spec),
-    var_stmt: ($) =>
-      seq("var", $.var_decl_item, repeat(seq(",", $.var_decl_item))),
-    export_stmt: ($) =>
-      seq("export", $.identifier, repeat(seq(",", $.identifier))),
-
-    base_type_spec: ($) =>
-      choice(
-        "void",
-        "bool",
-        "int",
-        "char",
-        "string",
-        "float",
-        "Duration",
-        "IpAddr",
-        "CIDR",
-        "Size",
-        "Date",
-        "Time",
-        "DateType",
-        seq("`", $.identifier),
-        seq("typespec", optional(seq("[", "`", $.identifier, "]"))),
-        seq("tuple", "[", $.type_spec_r, ",", repeat1($.type_spec_r), "]"),
-        seq("list", "[", $.type_spec_r, "]"),
-        seq("dict", "[", $.type_spec_r, ",", $.type_spec_r, "]")
-      ),
-
-    type_spec: ($) => choice($.base_type_spec, seq("func", $.func_spec)),
-    type_spec_r: ($) =>
-      choice($.base_type_spec, seq(optional("func"), $.func_spec)),
-
-    func_spec: ($) =>
-      seq(
-        "(",
-        $.type_spec_r,
-        repeat(seq(",", $.type_spec_r)),
-        optional(seq("*", $.type_spec_r)),
-        ")",
-        "->",
-        $.type_spec_r
-      ),
-
-    expression: ($) => choice($.unary_expr, $.not_expr, $.or_expr),
-    unary_expr: ($) =>
-      seq(optional(choice("+", "-")), choice($.access_expr, $.literal)),
-
-    not_expr: ($) => prec(2, seq(choice(("!", "not")), $.expression)),
-
-    access_expr: ($) =>
-      seq(
-        field("name", choice($.identifier, "$", $.paren_expr)),
-        field(
-          "arguments",
-          repeat(choice($.member_expr, $.index_expr, $.call_actuals))
-        )
-      ),
-    paren_expr: ($) => seq("(", $.expression, ")"),
-    member_expr: ($) => seq(".", $.identifier),
-    index_expr: ($) => seq("[", $.expression, "]"),
-    call_actuals: ($) =>
-      seq(
-        "(",
-        optional(seq($.expression, repeat(seq(",", $.expression)))),
-        ")"
-      ),
-
-    literal: ($) =>
-      choice(
-        $.number,
-        $.STR,
-        $.list_literal,
-        $.tuple_literal,
-        $.dict_literal,
-        $.type_spec,
-        $.other_lit,
+        // $._string_literal,
+        $.int_literal,
+        $.float_literal,
+        // $.imaginary_literal,
         $.true,
         $.false
+        // $.parenthesized_expression
       ),
+    expression_list: ($) => commaSep1($._expression),
 
-    true: ($) => choice("true", "True"),
-    false: ($) => choice("false", "False"),
-    tuple_literal: ($) =>
-      seq("(", $.expression, repeat1(seq(",", $.expression)), ")"),
-
-    list_literal: ($) =>
-      seq(
-        "[",
-        optional(seq($.expression, repeat(seq(",", $.expression)))),
-        "]"
-      ),
-    dict_literal: ($) =>
-      seq(
-        "{",
+    block: ($) => seq("{", optional($._statement_list), "}"),
+    _statement_list: ($) =>
+      choice(
         seq(
-          $.expression,
-          ":",
-          $.expression,
-          repeat(seq(",", $.expression, ":", $.expression))
-        ),
-        "}"
+          $._statement,
+          repeat(seq(terminator, $._statement)),
+          optional(terminator)
+        )
       ),
 
-    or_expr: ($) => seq($.expression, choice("||", "or"), $.and_expr),
-    and_expr: ($) => seq($.expression, choice("&&", "and"), $.ne_expr),
-    ne_expr: ($) => seq($.expression, "!=", $.eq_expr),
-    eq_expr: ($) => seq($.expression, "==", $.gte_expr),
-    gte_expr: ($) => seq($.expression, ">=", $.lte_expr),
-    lte_expr: ($) => seq($.expression, "<=", $.gt_expr),
-    gt_expr: ($) => seq($.expression, ">", $.lt_expr),
-    lt_expr: ($) => seq($.expression, "<", $.plus_expr),
-    plus_expr: ($) => seq($.expression, "+", $.minus_expr),
-    minus_expr: ($) => seq($.expression, "-", $.mod_expr),
-    mod_expr: ($) => seq($.expression, "%", $.mul_expr),
-    mul_expr: ($) => seq($.expression, "*", $.div_expr),
-    div_expr: ($) => seq($.expression, "/", $.access_expr),
+    assignment_statement: ($) =>
+      seq(
+        field("left", $.expression_list),
+        field("operator", choice(...assignment_operators)),
+        field("right", $.expression_list)
+      ),
+    eq_op: ($) => choice("=", ":", ":="),
+    enum_statement: ($) =>
+      seq("enum", $.identifier, repeat(seq(",", $.identifier))),
 
-    WS: ($) => repeat1(/[\u0020\u0009\u000D\u000A]/),
-    NL: ($) => /\r?\n|\r/,
+    if_statement: ($) =>
+      seq(
+        "if",
+        seq(field("condition", $._expression), field("consequence", $.block)),
+        repeat(field("alternative_conditional", $.elif_clause)),
+        optional(field("alternative_catchall", $.else_clause))
+      ),
+    elif_clause: ($) =>
+      seq(
+        "elif",
+        seq(field("condition", $._expression), field("consequence", $.block))
+      ),
+    else_clause: ($) =>
+      seq(
+        "else",
+        seq(field("condition", $._expression), field("consequence", $.block))
+      ),
+
     comment: ($) =>
       token(
         choice(
@@ -241,41 +170,18 @@ module.exports = grammar({
           seq(choice("#", "//"), /.*/)
         )
       ),
-    line_continuation: ($) =>
-      token(seq("\\", choice(seq(optional("\r"), "\n"), "\0"))),
-    integer: ($) =>
-      token(
-        choice(
-          seq(choice("0x", "0X"), repeat1(/_?[A-Fa-f0-9]+/), optional(/[Ll]/)),
-          seq(choice("0o", "0O"), repeat1(/_?[0-7]+/), optional(/[Ll]/)),
-          seq(choice("0b", "0B"), repeat1(/_?[0-1]+/), optional(/[Ll]/)),
-          seq(
-            repeat1(/[0-9]+_?/),
-            choice(
-              optional(/[Ll]/), // long numbers
-              optional(/[jJ]/) // complex numbers
-            )
-          )
-        )
-      ),
-
-    float: ($) => {
-      const digits = repeat1(/[0-9]+_?/);
-      const exponent = seq(/[eE][\+-]?/, digits);
-
-      return token(
-        seq(
-          choice(
-            seq(digits, ".", optional(digits), optional(exponent)),
-            seq(optional(digits), ".", digits, optional(exponent)),
-            seq(digits, exponent)
-          ),
-          optional(choice(/[Ll]/, /[jJ]/))
-        )
-      );
-    },
-    number: ($) => choice($.integer, $.float),
     other_lit: ($) => seq("<<", repeat(/./), ">>"),
+    int_literal: ($) => token(intLiteral),
+
+    float_literal: ($) => token(floatLiteral),
+
+    imaginary_literal: ($) => token(imaginaryLiteral),
+    true: ($) => choice("true", "True"),
+    false: ($) => choice("false", "False"),
+    empty_statement: ($) => ";",
+    continue_statement: ($) => "continue",
+    break_statement: ($) => "break",
+    return_statement: ($) => seq("return", optional($.expression_list)),
     quoted_string: ($) =>
       choice(
         seq('"', '"'),
@@ -296,7 +202,18 @@ module.exports = grammar({
     multiline_string: ($) =>
       choice(seq("'''", repeat(/./), "'''"), seq('"""', repeat(/./), '"""')),
 
-    STR: ($) => choice($.quoted_string, $.multiline_string),
+    _string_literal: ($) => choice($.quoted_string, $.multiline_string),
+
+    line_continuation: ($) =>
+      token(seq("\\", choice(seq(optional("\r"), "\n"), "\0"))),
     identifier: ($) => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
   },
 });
+
+function commaSep1(rule) {
+  return seq(rule, repeat(seq(",", rule)));
+}
+
+function commaSep(rule) {
+  return optional(commaSep1(rule));
+}
