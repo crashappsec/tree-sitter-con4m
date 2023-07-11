@@ -260,7 +260,7 @@ text := run("ls -l")
 
 
 =======================
-function call fact
+factorial
 =======================
 func fact(f) {
   result := 1
@@ -322,3 +322,150 @@ for i from 1 to 10 {
             (argument_list
                 (string_literal
                 (quoted_string)))))))))
+
+
+=======================
+var decl
+=======================
+
+var n: int
+---
+(source_file
+    (var_declaration
+    (var_decl_item
+        (identifier)
+        (type_spec
+        (base_type_spec)))))
+
+
+===================
+section
+===================
+object key {
+  user_def_ok: false
+
+  field required {
+    type:        "bool"
+    # docstring: "..."
+  }
+  foo {
+    type: "bar"
+  }
+}
+
+---
+
+(source_file
+    (section
+    (identifier)
+    (identifier)
+    (block
+        (assignment_statement
+        (expression_list
+            (identifier))
+        (expression_list
+            (false)))
+        (section
+        (identifier)
+        (identifier)
+        (block
+            (assignment_statement
+            (expression_list
+                (identifier))
+            (expression_list
+                (string_literal
+                (quoted_string))))
+            (comment)))
+        (section
+        (identifier)
+        (block
+            (assignment_statement
+            (expression_list
+                (identifier))
+            (expression_list
+                (string_literal
+                    (quoted_string)))))))))
+
+===========================
+section with conditionals
+===========================
+object key {
+  user_def_ok: false
+
+  field required {
+    type:        "bool"
+    # docstring: "..."
+  }
+  foo {
+    type: "bar"
+  }
+}
+
+condition = false
+condition2 = false
+if condition {
+    return
+}
+
+
+elif condition2 {
+    return
+}
+
+
+else {
+    return
+}
+---
+
+    (source_file
+      (section
+        (identifier)
+        (identifier)
+        (block
+          (assignment_statement
+            (expression_list
+              (identifier))
+            (expression_list
+              (false)))
+          (section
+            (identifier)
+            (identifier)
+            (block
+              (assignment_statement
+                (expression_list
+                  (identifier))
+                (expression_list
+                  (string_literal
+                    (quoted_string))))
+              (comment)))
+          (section
+            (identifier)
+            (block
+              (assignment_statement
+                (expression_list
+                  (identifier))
+                (expression_list
+                  (string_literal
+                    (quoted_string))))))))
+      (assignment_statement
+        (expression_list
+          (identifier))
+        (expression_list
+          (false)))
+      (assignment_statement
+        (expression_list
+          (identifier))
+        (expression_list
+          (false)))
+      (if_statement
+        (identifier)
+        (block
+          (return_statement))
+        (elif_clause
+          (identifier)
+          (block
+            (return_statement)))
+        (else_clause
+          (block
+            (return_statement)))))

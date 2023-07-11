@@ -91,11 +91,12 @@ module.exports = grammar({
 
     _top_level_item: ($) => choice($._statement, $._declaration),
 
-    _declaration: ($) => choice($.function_declaration),
+    _declaration: ($) => choice($.function_declaration, $.var_declaration),
 
     _statement: ($) =>
       choice(
         $._expression,
+        $.export_statement,
         $.return_statement,
         $.if_statement,
         $.for_statement,
@@ -103,6 +104,7 @@ module.exports = grammar({
         $.break_statement,
         $.continue_statement,
         $.block,
+        $.section,
         $.empty_statement
       ),
 
@@ -110,7 +112,7 @@ module.exports = grammar({
       prec(
         PREC.unary,
         seq(
-          // TODO add !
+          // TODO add ! for negation
           field("operator", choice("+", "-")),
           field("operand", $._expression)
         )
@@ -323,6 +325,13 @@ module.exports = grammar({
         $.type_spec_r
       ),
 
+    section: ($) =>
+      seq(
+        field("section_type", $.identifier),
+        optional(field("section_name", $.identifier)),
+        field("body", $.block)
+      ),
+
     function_declaration: ($) =>
       seq(
         "func",
@@ -330,12 +339,23 @@ module.exports = grammar({
         field("parameters", seq("(", commaSep($.param_spec), ")")),
         field("body", $.block)
       ),
+
+    var_declaration: ($) => seq("var", commaSep1($.var_decl_item)),
+
+    var_decl_item: ($) =>
+      seq(
+        field("name", commaSep1($.identifier)),
+        ":",
+        field("type", $.type_spec)
+      ),
+
     param_spec: ($) =>
       seq(
         field("param", $.identifier),
         field("param_type", optional(seq(":", $.type_spec)))
       ),
 
+    export_statement: ($) => seq("export", commaSep1($.identifier)),
     comment: ($) =>
       token(
         choice(
