@@ -81,3 +81,87 @@ else {
     (else_clause
         (block
         (return_statement)))))
+
+==================
+for loop
+==================
+
+result := 1
+for i from 1 to 10 {
+    result := result * i * 3
+}
+
+---
+
+(source_file
+    (assignment_statement
+    (expression_list
+        (identifier))
+    (expression_list
+        (int_literal)))
+    (for_statement
+    (identifier)
+    (for_range_clause
+        (int_literal)
+        (int_literal))
+    (block
+        (assignment_statement
+        (expression_list
+            (identifier))
+        (expression_list
+            (binary_expression
+            (binary_expression
+                (identifier)
+                (identifier))
+            (int_literal)))))))
+
+
+=======================
+composite literals
+=======================
+# foo bar
+my_path = ["/home/viega/bin", "/usr/sbin", "/usr/bin", "."]
+
+
+user_priorities =
+{ "john@crashoverride.com" : 5,
+                    "mark@crashoverride.com" : 1,
+                    "theo@crashoverride.com" : 10
+                   }
+
+---
+
+(source_file
+    (comment)
+    (assignment_statement
+    (expression_list
+        (identifier))
+    (expression_list
+        (composite_literal
+        (list_literal
+            (string_literal
+            (quoted_string))
+            (string_literal
+            (quoted_string))
+            (string_literal
+            (quoted_string))
+            (string_literal
+            (quoted_string))))))
+    (assignment_statement
+    (expression_list
+        (identifier))
+    (expression_list
+        (composite_literal
+        (dict_literal
+            (dict_kv
+            (string_literal
+                (quoted_string))
+            (int_literal))
+            (dict_kv
+            (string_literal
+                (quoted_string))
+            (int_literal))
+            (dict_kv
+            (string_literal
+                (quoted_string))
+            (int_literal)))))))

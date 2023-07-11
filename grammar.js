@@ -1,17 +1,22 @@
 const PREC = {
-    unary: 8,
-    if_elif_else: 7,
-    if_elif: 6,
-    if_else: 6,
-    if: 5,
+    if_elif_else: 13,
+    if_elif: 12,
+    if_else: 11,
+    if: 10,
+
+    primary: 7,
+    unary: 6,
+    multiplicative: 5,
+    additive: 4,
+    comparative: 3,
+    and: 2,
+    or: 1,
+    composite_literal: -1,
   },
-  multiplicative_operators = ["*", "/", "%", "<<", ">>", "&", "&^"],
-  additive_operators = ["+", "-", "|", "^"],
+  multiplicative_operators = ["*", "/", "%"],
+  additive_operators = ["+", "-"],
   comparative_operators = ["==", "!=", "<", "<=", ">", ">="],
-  assignment_operators = multiplicative_operators
-    .concat(additive_operators)
-    .map((operator) => operator + "=")
-    .concat("="),
+  assignment_operators = [":", "=", ":="],
   newline = "\n",
   terminator = choice(newline, ";");
 (hexDigit = /[0-9a-fA-F]/),
@@ -74,7 +79,9 @@ module.exports = grammar({
 
   word: ($) => $.identifier,
 
-  // supertypes: ($) => [$._expression, $._statement, $._simple_statement],
+  conflicts: ($) => [[$.dict_kv, $.expression_list]],
+
+  supertypes: ($) => [$._expression, $._statement],
   rules: {
     source_file: ($) =>
       seq(
@@ -88,12 +95,13 @@ module.exports = grammar({
       choice(
         $.return_statement,
         $.if_statement,
+        $.for_statement,
         $.assignment_statement,
         $.break_statement,
-        $.continue_statement
+        $.continue_statement,
+        $.block,
+        $.empty_statement
       ),
-
-    _simple_statement: ($) => choice($._expression, $.assignment_statement),
 
     unary_expression: ($) =>
       prec(
@@ -106,17 +114,27 @@ module.exports = grammar({
       ),
     _expression: ($) =>
       choice(
+        $.binary_expression,
         $.unary_expression,
-        // $.call_expression,
+        $.call_expression,
         $.identifier,
-        // $._string_literal,
+        $.composite_literal,
+        $.string_literal,
         $.int_literal,
         $.float_literal,
-        // $.imaginary_literal,
+        $.imaginary_literal,
         $.true,
-        $.false
-        // $.parenthesized_expression
+        $.false,
+        $.parenthesized_expression
       ),
+
+    composite_literal: ($) =>
+      prec(
+        PREC.composite_literal,
+        choice($.tuple_literal, $.list_literal, $.dict_literal)
+      ),
+
+    parenthesized_expression: ($) => seq("(", $._expression, ")"),
     expression_list: ($) => commaSep1($._expression),
 
     block: ($) => seq("{", optional($._statement_list), "}"),
@@ -138,6 +156,28 @@ module.exports = grammar({
     eq_op: ($) => choice("=", ":", ":="),
     enum_statement: ($) =>
       seq("enum", $.identifier, repeat(seq(",", $.identifier))),
+
+    for_statement: ($) =>
+      seq("for", $.identifier, $.for_range_clause, field("body", $.block)),
+
+    for_range_clause: ($) =>
+      seq(
+        "from",
+        field("left", $._expression),
+        "to",
+        field("right", $._expression)
+      ),
+
+    call_expression: ($) =>
+      prec(
+        PREC.primary,
+        seq(
+          field("function", $.identifier),
+          field("arguments", $.argument_list)
+        )
+      ),
+
+    argument_list: ($) => seq("(", commaSep($._expression), ")"),
 
     // break up if statement so at to allow new lines between conditional clauses
     if_statement: ($) =>
@@ -198,6 +238,29 @@ module.exports = grammar({
       ),
     else_clause: ($) => seq("else", field("consequence", $.block)),
 
+    binary_expression: ($) => {
+      const table = [
+        [PREC.multiplicative, choice(...multiplicative_operators)],
+        [PREC.additive, choice(...additive_operators)],
+        [PREC.comparative, choice(...comparative_operators)],
+        [PREC.and, choice("&&", "and")],
+        [PREC.or, choice("||", "or")],
+      ];
+
+      return choice(
+        ...table.map(([precedence, operator]) =>
+          prec.left(
+            precedence,
+            seq(
+              field("left", $._expression),
+              field("operator", operator),
+              field("right", $._expression)
+            )
+          )
+        )
+      );
+    },
+
     comment: ($) =>
       token(
         choice(
@@ -210,6 +273,13 @@ module.exports = grammar({
     int_literal: ($) => token(intLiteral),
 
     float_literal: ($) => token(floatLiteral),
+    tuple_literal: ($) =>
+      seq("(", $._expression, repeat1(seq(",", $._expression)), ")"),
+
+    list_literal: ($) => seq("[", commaSep($._expression), "]"),
+    dict_literal: ($) => seq("{", commaSep($.dict_kv), "}"),
+    dict_kv: ($) =>
+      seq(field("key", $._expression), ":", field("value", $._expression)),
 
     imaginary_literal: ($) => token(imaginaryLiteral),
     true: ($) => choice("true", "True"),
@@ -238,7 +308,7 @@ module.exports = grammar({
     multiline_string: ($) =>
       choice(seq("'''", repeat(/./), "'''"), seq('"""', repeat(/./), '"""')),
 
-    _string_literal: ($) => choice($.quoted_string, $.multiline_string),
+    string_literal: ($) => choice($.quoted_string, $.multiline_string),
 
     identifier: ($) => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
   },

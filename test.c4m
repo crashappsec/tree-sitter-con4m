@@ -1,15 +1,1 @@
-condition = false
-condition2 = false
-if condition {
-    return
-}
-
-
-elif condition2 {
-    return
-}
-
-
-else {
-    return
-}
+text := run("ls -l")
