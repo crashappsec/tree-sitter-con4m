@@ -1,12 +1,9 @@
 const PREC = {
-    primary: 7,
-    unary: 6,
-    multiplicative: 5,
-    additive: 4,
-    comparative: 3,
-    and: 2,
-    or: 1,
-    composite_literal: -1,
+    unary: 8,
+    if_elif_else: 7,
+    if_elif: 6,
+    if_else: 6,
+    if: 5,
   },
   multiplicative_operators = ["*", "/", "%", "<<", ">>", "&", "&^"],
   additive_operators = ["+", "-", "|", "^"],
@@ -73,11 +70,7 @@ const PREC = {
 module.exports = grammar({
   name: "con4m",
 
-  extras: ($) => [
-    $.comment,
-    /[\s\f\uFEFF\u2060\u200B]|\r?\n/,
-    $.line_continuation,
-  ],
+  extras: ($) => [$.comment, /\s/],
 
   word: ($) => $.identifier,
 
@@ -145,22 +138,62 @@ module.exports = grammar({
       seq("enum", $.identifier, repeat(seq(",", $.identifier))),
 
     if_statement: ($) =>
-      seq(
-        "if",
-        seq(field("condition", $._expression), field("consequence", $.block)),
-        repeat(field("alternative_conditional", $.elif_clause)),
-        optional(field("alternative_catchall", $.else_clause))
+      choice(
+        $._if_stmt,
+        $._if_elif_stmt,
+        $._if_elif_else_stmt,
+        $._if_else_stmt
+      ),
+    _if_stmt: ($) =>
+      prec(
+        PREC.if,
+        seq(
+          "if",
+          field("condition", $._expression),
+          field("consequence", $.block)
+        )
+      ),
+    _if_elif_stmt: ($) =>
+      prec(
+        PREC.if_elif,
+        seq(
+          "if",
+          field("condition", $._expression),
+          field("consequence", $.block),
+          repeat(newline),
+          repeat1(field("alternative_conditional", $.elif_clause))
+        )
+      ),
+    _if_elif_else_stmt: ($) =>
+      prec(
+        PREC.if_elif_else,
+        seq(
+          "if",
+          field("condition", $._expression),
+          field("consequence", $.block),
+          repeat(newline),
+          repeat1(field("alternative_conditional", $.elif_clause)),
+          repeat(newline),
+          field("alternative_catchall", $.else_clause)
+        )
+      ),
+    _if_else_stmt: ($) =>
+      prec(
+        PREC.if_else,
+        seq(
+          "if",
+          field("condition", $._expression),
+          field("consequence", $.block),
+          repeat(newline),
+          field("alternative_catchall", $.else_clause)
+        )
       ),
     elif_clause: ($) =>
       seq(
         "elif",
         seq(field("condition", $._expression), field("consequence", $.block))
       ),
-    else_clause: ($) =>
-      seq(
-        "else",
-        seq(field("condition", $._expression), field("consequence", $.block))
-      ),
+    else_clause: ($) => seq("else", field("consequence", $.block)),
 
     comment: ($) =>
       token(
@@ -204,8 +237,6 @@ module.exports = grammar({
 
     _string_literal: ($) => choice($.quoted_string, $.multiline_string),
 
-    line_continuation: ($) =>
-      token(seq("\\", choice(seq(optional("\r"), "\n"), "\0"))),
     identifier: ($) => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
   },
 });
