@@ -198,7 +198,7 @@ module.exports = grammar({
       prec(
         PREC.primary,
         seq(
-          field("function", $.identifier),
+          field("function", choice($.identifier, "$")),
           field("arguments", $.argument_list)
         )
       ),
