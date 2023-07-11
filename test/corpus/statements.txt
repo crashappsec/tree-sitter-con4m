@@ -1,272 +1,604 @@
 ==================
-Assignments
+if nospaces
 ==================
 
-use_color: false
-log_level: warn;
-aliases: ["generate", "spec", "specgen"]
-
----
-
-(source_file
- (toplevel_items
-  (assignment
-   (access_expr
-    (identifier))
-   (eq_op)
-   (expression
-    (unary_expr
-     (literal
-                (false))))))
- (NL)
- (toplevel_items
-  (assignment
-   (access_expr
-    (identifier))
-   (eq_op)
-   (expression
-    (unary_expr
-     (access_expr
-      (identifier))))))
- (NL)
- (toplevel_items
-  (assignment
-   (access_expr
-    (identifier))
-   (eq_op)
-   (expression
-    (unary_expr
-     (literal
-      (list_literal
-       (expression
-        (unary_expr
-         (literal
-          (STR
-           (quoted_string)))))
-       (expression
-        (unary_expr
-         (literal
-          (STR
-           (quoted_string)))))
-       (expression
-        (unary_expr
-         (literal
-          (STR
-           (quoted_string)))))))))))
-(NL))
-
-==================
-Fields
-==================
-
-getopts {}
-command gen {
-    flag_choice language {
-            field_to_set: "language"
-            choices: ["nim", "none"]
-    }
-}
-
----
-
-    (source_file
-      (toplevel_items
-        (section
-          (identifier)
-          (body)))
-      (NL)
-      (toplevel_items
-        (section
-          (identifier)
-          (identifier)
-          (body
-            (body_items
-              (section
-                (identifier)
-                (identifier)
-                (body
-                  (body_items
-                    (assignment
-                      (access_expr
-                        (identifier))
-                      (eq_op)
-                      (expression
-                        (unary_expr
-                          (literal
-                            (STR
-                              (quoted_string)))))))
-                  (NL)
-                  (body_items
-                    (assignment
-                      (access_expr
-                        (identifier))
-                      (eq_op)
-                      (expression
-                        (unary_expr
-                          (literal
-                            (list_literal
-                              (expression
-                                (unary_expr
-                                  (literal
-                                    (STR
-                                      (quoted_string)))))
-                              (expression
-                                (unary_expr
-                                  (literal
-                                    (STR
-                                      (quoted_string)))))))))))
-                  (NL))))
-            (NL))))
-      (NL))
-
-==============
-Literals
-==============
-
-args: (1, 6)
-
----
-
-(source_file
- (toplevel_items
-  (assignment
-   (access_expr
-    (identifier))
-   (eq_op)
-   (expression
-    (unary_expr
-     (literal
-      (tuple_literal
-       (expression
-        (unary_expr
-         (literal
-          (number
-           (integer)))))
-       (expression
-        (unary_expr
-         (literal
-          (number
-           (integer)))))))))))
- (NL))
-
-==============
-Quoted Strings
-==============
-
-echo("foo")
-echo("foo with' foo")
----
-
-    (source_file
-      (toplevel_items
-        (expression
-          (unary_expr
-            (access_expr
-              (identifier)
-              (call_actuals
-                (expression
-                  (unary_expr
-                    (literal
-                      (STR
-                        (quoted_string))))))))))
-      (NL)
-      (toplevel_items
-        (expression
-          (unary_expr
-            (access_expr
-              (identifier)
-              (call_actuals
-                (expression
-                  (unary_expr
-                    (literal
-                      (STR
-                        (quoted_string)))))))))))
-
-===================
-if elif statements
-===================
-
-condition: false
-condition2: true
+condition = false
+condition2 = false
 if condition {
-   default_compiler_flags: "-DDEBUG -O0"
+    return
 } elif condition2 {
-    default_compiler_flags: "foo"
-}
-
----
-
-    (source_file
-      (toplevel_items
-        (assignment
-          (access_expr
-            (identifier))
-          (eq_op)
-          (expression
-            (unary_expr
-              (literal
-                (false))))))
-      (NL)
-      (toplevel_items
-        (assignment
-          (access_expr
-            (identifier))
-          (eq_op)
-          (expression
-            (unary_expr
-              (literal
-                (true))))))
-      (NL)
-      (toplevel_items
-        (if_stmt
-          (expression
-            (unary_expr
-              (access_expr
-                (identifier))))
-          (body
-            (body_items
-              (assignment
-                (access_expr
-                  (identifier))
-                (eq_op)
-                (expression
-                  (unary_expr
-                    (literal
-                      (STR
-                        (quoted_string)))))))
-            (NL))
-          (expression
-            (unary_expr
-              (access_expr
-                (identifier))))
-          (body
-            (body_items
-              (assignment
-                (access_expr
-                  (identifier))
-                (eq_op)
-                (expression
-                  (unary_expr
-                    (literal
-                      (STR
-                        (quoted_string)))))))
-            (NL))))
-      (NL))
-
-
-===================
-if elif statements2
-===================
-
-condition: false
-condition2: true
-if condition {
-   default_compiler_flags: "-DDEBUG -O0"
-} elif condition2 {
-    default_compiler_flags: "foo"
+    return
 } else {
-  default_compiler_flags: "-fPIC"
+    return
+}
+
+---
+
+(source_file
+    (assignment_statement
+    (expression_list
+        (identifier))
+    (expression_list
+        (false)))
+    (assignment_statement
+    (expression_list
+        (identifier))
+    (expression_list
+        (false)))
+    (if_statement
+    (identifier)
+    (block
+        (return_statement))
+    (elif_clause
+        (identifier)
+        (block
+        (return_statement)))
+    (else_clause
+        (block
+        (return_statement)))))
+
+==================
+if spaces
+==================
+
+condition = false
+condition2 = false
+if condition {
+    return
 }
 
 
+elif condition2 {
+    return
+}
+
+
+else {
+    return
+}
+
 ---
+
+(source_file
+    (assignment_statement
+    (expression_list
+        (identifier))
+    (expression_list
+        (false)))
+    (assignment_statement
+    (expression_list
+        (identifier))
+    (expression_list
+        (false)))
+    (if_statement
+    (identifier)
+    (block
+        (return_statement))
+    (elif_clause
+        (identifier)
+        (block
+        (return_statement)))
+    (else_clause
+        (block
+        (return_statement)))))
+
+==================
+if with calls
+==================
+parts := split(env("PATH"), ":")
+if parts[0] == "" {
+    echo("foo")
+} elif parts[0] == "desired" {
+    echo("desired")
+}
+# foo
+echo("Not what I'm looking for: ", parts[0])
+
+---
+
+(source_file
+    (assignment_statement
+    (expression_list
+        (identifier))
+    (expression_list
+        (call_expression
+        (identifier)
+        (argument_list
+            (call_expression
+            (identifier)
+            (argument_list
+                (string_literal
+                (quoted_string))))
+            (string_literal
+            (quoted_string))))))
+    (if_statement
+    (binary_expression
+        (index_expression
+        (identifier)
+        (int_literal))
+        (string_literal
+        (quoted_string)))
+    (block
+        (call_expression
+        (identifier)
+        (argument_list
+            (string_literal
+            (quoted_string)))))
+    (elif_clause
+        (binary_expression
+        (index_expression
+            (identifier)
+            (int_literal))
+        (string_literal
+            (quoted_string)))
+        (block
+        (call_expression
+            (identifier)
+            (argument_list
+            (string_literal
+                (quoted_string)))))))
+    (comment)
+    (call_expression
+    (identifier)
+    (argument_list
+        (string_literal
+        (quoted_string))
+        (index_expression
+        (identifier)
+        (int_literal)))))
+
+==================
+for loop
+==================
+
+result := 1
+for i from 1 to 10 {
+    result := result * i * 3
+}
+
+---
+
+(source_file
+    (assignment_statement
+    (expression_list
+        (identifier))
+    (expression_list
+        (int_literal)))
+    (for_statement
+    (identifier)
+    (for_range_clause
+        (int_literal)
+        (int_literal))
+    (block
+        (assignment_statement
+        (expression_list
+            (identifier))
+        (expression_list
+            (binary_expression
+            (binary_expression
+                (identifier)
+                (identifier))
+            (int_literal)))))))
+
+
+=======================
+composite literals
+=======================
+# foo bar
+my_path = ["/home/viega/bin", "/usr/sbin", "/usr/bin", "."]
+
+
+user_priorities =
+{ "john@crashoverride.com" : 5,
+                    "mark@crashoverride.com" : 1,
+                    "theo@crashoverride.com" : 10
+                   }
+
+---
+
+(source_file
+    (comment)
+    (assignment_statement
+    (expression_list
+        (identifier))
+    (expression_list
+        (composite_literal
+        (list_literal
+            (string_literal
+            (quoted_string))
+            (string_literal
+            (quoted_string))
+            (string_literal
+            (quoted_string))
+            (string_literal
+            (quoted_string))))))
+    (assignment_statement
+    (expression_list
+        (identifier))
+    (expression_list
+        (composite_literal
+        (dict_literal
+            (dict_kv
+            (string_literal
+                (quoted_string))
+            (int_literal))
+            (dict_kv
+            (string_literal
+                (quoted_string))
+            (int_literal))
+            (dict_kv
+            (string_literal
+                (quoted_string))
+            (int_literal)))))))
+
+=======================
+composite literals accessors
+=======================
+
+my_path = ["/home/viega/bin", "/usr/sbin", "/usr/bin", "."]
+user_priorities = { "john@crashoverride.com" : 5,
+                    "mark@crashoverride.com" : 1,
+                    "theo@crashoverride.com" : 10
+                   }
+for i from 0 to len(my_path) {
+  echo(my_path[i])
+}
+
+echo(user_priorities["john@crashoverride.com"])
+
+---
+
+    (source_file
+      (assignment_statement
+        (expression_list
+          (identifier))
+        (expression_list
+          (composite_literal
+            (list_literal
+              (string_literal
+                (quoted_string))
+              (string_literal
+                (quoted_string))
+              (string_literal
+                (quoted_string))
+              (string_literal
+                (quoted_string))))))
+      (assignment_statement
+        (expression_list
+          (identifier))
+        (expression_list
+          (composite_literal
+            (dict_literal
+              (dict_kv
+                (string_literal
+                  (quoted_string))
+                (int_literal))
+              (dict_kv
+                (string_literal
+                  (quoted_string))
+                (int_literal))
+              (dict_kv
+                (string_literal
+                  (quoted_string))
+                (int_literal))))))
+      (for_statement
+        (identifier)
+        (for_range_clause
+          (int_literal)
+          (call_expression
+            (identifier)
+            (argument_list
+              (identifier))))
+        (block
+          (call_expression
+            (identifier)
+            (argument_list
+              (index_expression
+                (identifier)
+                (identifier))))))
+      (call_expression
+        (identifier)
+        (argument_list
+          (index_expression
+            (identifier)
+            (string_literal
+              (quoted_string))))))
+
+=======================
+call statement
+=======================
+
+text := run("ls -l")
+
+---
+
+(source_file
+ (assignment_statement
+  (expression_list
+   (identifier))
+  (expression_list
+   (call_expression
+    (identifier)
+    (argument_list
+     (string_literal
+      (quoted_string)))))))
+
+
+=======================
+attr mem
+=======================
+x.y.z = 10
+
+echo(string(x.y.z))
+---
+(source_file
+    (assignment_statement
+    (expression_list
+        (selector_expression
+        (selector_expression
+            (identifier)
+            (field_identifier
+            (field_identifier)))
+        (field_identifier
+            (field_identifier))))
+    (expression_list
+        (int_literal)))
+    (call_expression
+    (identifier)
+    (argument_list
+        (call_expression
+        (identifier)
+        (argument_list
+            (selector_expression
+            (selector_expression
+                (identifier)
+                (field_identifier
+                (field_identifier)))
+            (field_identifier
+                (field_identifier))))))))
+
+=======================
+enum statement
+=======================
+enum A, B, C, D, E, F, G
+
+func test() {
+  echo(format("The integer value for the enum val F is: {F}"))
+}
+
+test()
+---
+(source_file
+    (enum_declaration
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier))
+    (function_declaration
+    (identifier)
+    (block
+        (call_expression
+        (identifier)
+        (argument_list
+            (call_expression
+            (identifier)
+            (argument_list
+                (string_literal
+                (quoted_string))))))))
+    (call_expression
+    (identifier)
+    (argument_list)))
+
+=======================
+factorial
+=======================
+func fact(f) {
+  result := 1
+  for i from 1 to f {
+    result := result * i
+  }
+}
+
+for i from 1 to 10 {
+  x := fact(i)
+  echo (format("fact({i}) = {x}"))
+}
+
+---
+
+(source_file
+    (function_declaration
+    (identifier)
+    (param_spec
+        (identifier))
+    (block
+        (assignment_statement
+        (expression_list
+            (identifier))
+        (expression_list
+            (int_literal)))
+        (for_statement
+        (identifier)
+        (for_range_clause
+            (int_literal)
+            (identifier))
+        (block
+            (assignment_statement
+            (expression_list
+                (identifier))
+            (expression_list
+                (binary_expression
+                (identifier)
+                (identifier))))))))
+    (for_statement
+    (identifier)
+    (for_range_clause
+        (int_literal)
+        (int_literal))
+    (block
+        (assignment_statement
+        (expression_list
+            (identifier))
+        (expression_list
+            (call_expression
+            (identifier)
+            (argument_list
+                (identifier)))))
+        (call_expression
+        (identifier)
+        (argument_list
+            (call_expression
+            (identifier)
+            (argument_list
+                (string_literal
+                (quoted_string)))))))))
+
+
+=======================
+var decl
+=======================
+
+var n: int
+---
+(source_file
+    (var_declaration
+    (var_decl_item
+        (identifier)
+        (type_spec
+        (base_type_spec)))))
+
+
+===================
+section
+===================
+object key {
+  user_def_ok: false
+
+  field required {
+    type:        "bool"
+    # docstring: "..."
+  }
+  foo {
+    type: "bar"
+  }
+}
+
+---
+
+(source_file
+    (section
+    (identifier)
+    (identifier)
+    (block
+        (assignment_statement
+        (expression_list
+            (identifier))
+        (expression_list
+            (false)))
+        (section
+        (identifier)
+        (identifier)
+        (block
+            (assignment_statement
+            (expression_list
+                (identifier))
+            (expression_list
+                (string_literal
+                (quoted_string))))
+            (comment)))
+        (section
+        (identifier)
+        (block
+            (assignment_statement
+            (expression_list
+                (identifier))
+            (expression_list
+                (string_literal
+                    (quoted_string)))))))))
+
+===========================
+section with conditionals
+===========================
+object key {
+  user_def_ok: false
+
+  field required {
+    type:        "bool"
+    # docstring: "..."
+  }
+  foo {
+    type: "bar"
+  }
+}
+
+condition = false
+condition2 = false
+if condition {
+    return
+}
+
+
+elif condition2 {
+    return
+}
+
+
+else {
+    return
+}
+---
+
+    (source_file
+      (section
+        (identifier)
+        (identifier)
+        (block
+          (assignment_statement
+            (expression_list
+              (identifier))
+            (expression_list
+              (false)))
+          (section
+            (identifier)
+            (identifier)
+            (block
+              (assignment_statement
+                (expression_list
+                  (identifier))
+                (expression_list
+                  (string_literal
+                    (quoted_string))))
+              (comment)))
+          (section
+            (identifier)
+            (block
+              (assignment_statement
+                (expression_list
+                  (identifier))
+                (expression_list
+                  (string_literal
+                    (quoted_string))))))))
+      (assignment_statement
+        (expression_list
+          (identifier))
+        (expression_list
+          (false)))
+      (assignment_statement
+        (expression_list
+          (identifier))
+        (expression_list
+          (false)))
+      (if_statement
+        (identifier)
+        (block
+          (return_statement))
+        (elif_clause
+          (identifier)
+          (block
+            (return_statement)))
+        (else_clause
+          (block
+            (return_statement)))))
