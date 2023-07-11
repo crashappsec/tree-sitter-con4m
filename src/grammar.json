@@ -15,7 +15,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_statement"
+                    "name": "_top_level_item"
                   }
                 ]
               },
@@ -43,7 +43,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "_statement"
+                  "name": "_top_level_item"
                 }
               ]
             },
@@ -51,6 +51,15 @@
               "type": "BLANK"
             }
           ]
+        }
+      ]
+    },
+    "_top_level_item": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_statement"
         }
       ]
     },
@@ -2992,10 +3001,6 @@
   "precedences": [],
   "externals": [],
   "inline": [],
-  "supertypes": [
-    "_expression",
-    "_statement",
-    "_simple_statement"
-  ]
+  "supertypes": []
 }
 

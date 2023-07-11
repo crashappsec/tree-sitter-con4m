@@ -74,13 +74,15 @@ module.exports = grammar({
 
   word: ($) => $.identifier,
 
-  supertypes: ($) => [$._expression, $._statement, $._simple_statement],
+  // supertypes: ($) => [$._expression, $._statement, $._simple_statement],
   rules: {
     source_file: ($) =>
       seq(
-        repeat(seq(choice($._statement), terminator)),
-        optional(choice($._statement))
+        repeat(seq(choice($._top_level_item), terminator)),
+        optional(choice($._top_level_item))
       ),
+
+    _top_level_item: ($) => choice($._statement),
 
     _statement: ($) =>
       choice(
@@ -137,6 +139,7 @@ module.exports = grammar({
     enum_statement: ($) =>
       seq("enum", $.identifier, repeat(seq(",", $.identifier))),
 
+    // break up if statement so at to allow new lines between conditional clauses
     if_statement: ($) =>
       choice(
         $._if_stmt,

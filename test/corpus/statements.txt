@@ -1,255 +1,83 @@
 ==================
-Assignments
+if nospaces
 ==================
 
-use_color: false
-log_level: warn;
-aliases: ["generate", "spec", "specgen"]
-
----
-
-(source_file
- (toplevel_items
-  (assignment
-   (access_expr
-    (identifier))
-   (eq_op)
-   (expression
-    (unary_expr
-     (literal
-                (false))))))
- (NL)
- (toplevel_items
-  (assignment
-   (access_expr
-    (identifier))
-   (eq_op)
-   (expression
-    (unary_expr
-     (access_expr
-      (identifier))))))
- (NL)
- (toplevel_items
-  (assignment
-   (access_expr
-    (identifier))
-   (eq_op)
-   (expression
-    (unary_expr
-     (literal
-      (list_literal
-       (expression
-        (unary_expr
-         (literal
-          (STR
-           (quoted_string)))))
-       (expression
-        (unary_expr
-         (literal
-          (STR
-           (quoted_string)))))
-       (expression
-        (unary_expr
-         (literal
-          (STR
-           (quoted_string)))))))))))
-(NL))
-
-==================
-Fields
-==================
-
-getopts {}
-command gen {
-    flag_choice language {
-            field_to_set: "language"
-            choices: ["nim", "none"]
-    }
-}
-
----
-
-    (source_file
-      (toplevel_items
-        (section
-          (identifier)
-          (body)))
-      (NL)
-      (toplevel_items
-        (section
-          (identifier)
-          (identifier)
-          (body
-            (body_items
-              (section
-                (identifier)
-                (identifier)
-                (body
-                  (body_items
-                    (assignment
-                      (access_expr
-                        (identifier))
-                      (eq_op)
-                      (expression
-                        (unary_expr
-                          (literal
-                            (STR
-                              (quoted_string)))))))
-                  (NL)
-                  (body_items
-                    (assignment
-                      (access_expr
-                        (identifier))
-                      (eq_op)
-                      (expression
-                        (unary_expr
-                          (literal
-                            (list_literal
-                              (expression
-                                (unary_expr
-                                  (literal
-                                    (STR
-                                      (quoted_string)))))
-                              (expression
-                                (unary_expr
-                                  (literal
-                                    (STR
-                                      (quoted_string)))))))))))
-                  (NL))))
-            (NL))))
-      (NL))
-
-==============
-Literals
-==============
-
-args: (1, 6)
-
----
-
-(source_file
- (toplevel_items
-  (assignment
-   (access_expr
-    (identifier))
-   (eq_op)
-   (expression
-    (unary_expr
-     (literal
-      (tuple_literal
-       (expression
-        (unary_expr
-         (literal
-          (number
-           (integer)))))
-       (expression
-        (unary_expr
-         (literal
-          (number
-           (integer)))))))))))
- (NL))
-
-==============
-Quoted Strings
-==============
-
-echo("foo")
-echo("foo with' foo")
----
-
-    (source_file
-      (toplevel_items
-        (expression
-          (unary_expr
-            (access_expr
-              (identifier)
-              (call_actuals
-                (expression
-                  (unary_expr
-                    (literal
-                      (STR
-                        (quoted_string))))))))))
-      (NL)
-      (toplevel_items
-        (expression
-          (unary_expr
-            (access_expr
-              (identifier)
-              (call_actuals
-                (expression
-                  (unary_expr
-                    (literal
-                      (STR
-                        (quoted_string)))))))))))
-
-===================
-if elif statements
-===================
-
-condition: false
-condition2: true
+condition = false
+condition2 = false
 if condition {
-   default_compiler_flags: "-DDEBUG -O0"
+    return
 } elif condition2 {
-    default_compiler_flags: "foo"
+    return
+} else {
+    return
 }
 
 ---
 
-    (source_file
-      (toplevel_items
-        (assignment
-          (access_expr
-            (identifier))
-          (eq_op)
-          (expression
-            (unary_expr
-              (literal
-                (false))))))
-      (NL)
-      (toplevel_items
-        (assignment
-          (access_expr
-            (identifier))
-          (eq_op)
-          (expression
-            (unary_expr
-              (literal
-                (true))))))
-      (NL)
-      (toplevel_items
-        (if_stmt
-          (expression
-            (unary_expr
-              (access_expr
-                (identifier))))
-          (body
-            (body_items
-              (assignment
-                (access_expr
-                  (identifier))
-                (eq_op)
-                (expression
-                  (unary_expr
-                    (literal
-                      (STR
-                        (quoted_string)))))))
-            (NL))
-          (expression
-            (unary_expr
-              (access_expr
-                (identifier))))
-          (body
-            (body_items
-              (assignment
-                (access_expr
-                  (identifier))
-                (eq_op)
-                (expression
-                  (unary_expr
-                    (literal
-                      (STR
-                        (quoted_string)))))))
-            (NL))))
-      (NL))
+(source_file
+    (assignment_statement
+    (expression_list
+        (identifier))
+    (expression_list
+        (false)))
+    (assignment_statement
+    (expression_list
+        (identifier))
+    (expression_list
+        (false)))
+    (if_statement
+    (identifier)
+    (block
+        (return_statement))
+    (elif_clause
+        (identifier)
+        (block
+        (return_statement)))
+    (else_clause
+        (block
+        (return_statement)))))
 
+==================
+if spaces
+==================
+
+condition = false
+condition2 = false
+if condition {
+    return
+}
+
+
+elif condition2 {
+    return
+}
+
+
+else {
+    return
+}
+
+---
+
+(source_file
+    (assignment_statement
+    (expression_list
+        (identifier))
+    (expression_list
+        (false)))
+    (assignment_statement
+    (expression_list
+        (identifier))
+    (expression_list
+        (false)))
+    (if_statement
+    (identifier)
+    (block
+        (return_statement))
+    (elif_clause
+        (identifier)
+        (block
+        (return_statement)))
+    (else_clause
+        (block
+        (return_statement)))))
