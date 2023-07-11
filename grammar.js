@@ -1,11 +1,4 @@
 const PREC = {
-    // hack to allow newlines between if / elif declarations without colliding
-    // with sections
-    if_elif_else: 13,
-    if_elif: 12,
-    if_else: 11,
-    if: 10,
-
     primary: 7,
     unary: 6,
     multiplicative: 5,
@@ -81,7 +74,11 @@ module.exports = grammar({
 
   word: ($) => $.identifier,
 
-  conflicts: ($) => [[$.dict_kv, $.expression_list]],
+  conflicts: ($) => [
+    [$.dict_kv, $.expression_list],
+    [$._if_stmt, $._if_elif_stmt, $._if_else_stmt, $._if_elif_else_stmt],
+    [$._if_elif_stmt, $._if_elif_else_stmt],
+  ],
 
   supertypes: ($) => [$._expression, $._statement],
   rules: {
@@ -93,7 +90,8 @@ module.exports = grammar({
 
     _top_level_item: ($) => choice($._statement, $._declaration),
 
-    _declaration: ($) => choice($.function_declaration, $.var_declaration),
+    _declaration: ($) =>
+      choice($.function_declaration, $.var_declaration, $.enum_declaration),
 
     _statement: ($) =>
       choice(
@@ -182,7 +180,7 @@ module.exports = grammar({
         field("right", $.expression_list)
       ),
     eq_op: ($) => choice("=", ":", ":="),
-    enum_statement: ($) =>
+    enum_declaration: ($) =>
       seq("enum", $.identifier, repeat(seq(",", $.identifier))),
 
     for_statement: ($) =>
@@ -216,48 +214,36 @@ module.exports = grammar({
         $._if_else_stmt
       ),
     _if_stmt: ($) =>
-      prec(
-        PREC.if,
-        seq(
-          "if",
-          field("condition", $._expression),
-          field("consequence", $.block)
-        )
+      seq(
+        "if",
+        field("condition", $._expression),
+        field("consequence", $.block)
       ),
     _if_elif_stmt: ($) =>
-      prec(
-        PREC.if_elif,
-        seq(
-          "if",
-          field("condition", $._expression),
-          field("consequence", $.block),
-          repeat(newline),
-          repeat1(field("alternative_conditional", $.elif_clause))
-        )
+      seq(
+        "if",
+        field("condition", $._expression),
+        field("consequence", $.block),
+        repeat(newline),
+        repeat1(field("alternative_conditional", $.elif_clause))
       ),
     _if_elif_else_stmt: ($) =>
-      prec(
-        PREC.if_elif_else,
-        seq(
-          "if",
-          field("condition", $._expression),
-          field("consequence", $.block),
-          repeat(newline),
-          repeat1(field("alternative_conditional", $.elif_clause)),
-          repeat(newline),
-          field("alternative_catchall", $.else_clause)
-        )
+      seq(
+        "if",
+        field("condition", $._expression),
+        field("consequence", $.block),
+        repeat(newline),
+        repeat1(field("alternative_conditional", $.elif_clause)),
+        repeat(newline),
+        field("alternative_catchall", $.else_clause)
       ),
     _if_else_stmt: ($) =>
-      prec(
-        PREC.if_else,
-        seq(
-          "if",
-          field("condition", $._expression),
-          field("consequence", $.block),
-          repeat(newline),
-          field("alternative_catchall", $.else_clause)
-        )
+      seq(
+        "if",
+        field("condition", $._expression),
+        field("consequence", $.block),
+        repeat(newline),
+        field("alternative_catchall", $.else_clause)
       ),
     elif_clause: ($) =>
       seq(

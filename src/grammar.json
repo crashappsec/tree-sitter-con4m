@@ -70,6 +70,10 @@
         {
           "type": "SYMBOL",
           "name": "var_declaration"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "enum_declaration"
         }
       ]
     },
@@ -482,7 +486,7 @@
         }
       ]
     },
-    "enum_statement": {
+    "enum_declaration": {
       "type": "SEQ",
       "members": [
         {
@@ -658,186 +662,170 @@
       ]
     },
     "_if_stmt": {
-      "type": "PREC",
-      "value": 10,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "if"
-          },
-          {
-            "type": "FIELD",
-            "name": "condition",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_expression"
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "consequence",
-            "content": {
-              "type": "SYMBOL",
-              "name": "block"
-            }
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "if"
+        },
+        {
+          "type": "FIELD",
+          "name": "condition",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_expression"
           }
-        ]
-      }
+        },
+        {
+          "type": "FIELD",
+          "name": "consequence",
+          "content": {
+            "type": "SYMBOL",
+            "name": "block"
+          }
+        }
+      ]
     },
     "_if_elif_stmt": {
-      "type": "PREC",
-      "value": 12,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "if"
+        },
+        {
+          "type": "FIELD",
+          "name": "condition",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_expression"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "consequence",
+          "content": {
+            "type": "SYMBOL",
+            "name": "block"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
             "type": "STRING",
-            "value": "if"
-          },
-          {
+            "value": "\n"
+          }
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
             "type": "FIELD",
-            "name": "condition",
+            "name": "alternative_conditional",
             "content": {
               "type": "SYMBOL",
-              "name": "_expression"
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "consequence",
-            "content": {
-              "type": "SYMBOL",
-              "name": "block"
-            }
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "STRING",
-              "value": "\n"
-            }
-          },
-          {
-            "type": "REPEAT1",
-            "content": {
-              "type": "FIELD",
-              "name": "alternative_conditional",
-              "content": {
-                "type": "SYMBOL",
-                "name": "elif_clause"
-              }
+              "name": "elif_clause"
             }
           }
-        ]
-      }
+        }
+      ]
     },
     "_if_elif_else_stmt": {
-      "type": "PREC",
-      "value": 13,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "if"
+        },
+        {
+          "type": "FIELD",
+          "name": "condition",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_expression"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "consequence",
+          "content": {
+            "type": "SYMBOL",
+            "name": "block"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
             "type": "STRING",
-            "value": "if"
-          },
-          {
+            "value": "\n"
+          }
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
             "type": "FIELD",
-            "name": "condition",
+            "name": "alternative_conditional",
             "content": {
               "type": "SYMBOL",
-              "name": "_expression"
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "consequence",
-            "content": {
-              "type": "SYMBOL",
-              "name": "block"
-            }
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "STRING",
-              "value": "\n"
-            }
-          },
-          {
-            "type": "REPEAT1",
-            "content": {
-              "type": "FIELD",
-              "name": "alternative_conditional",
-              "content": {
-                "type": "SYMBOL",
-                "name": "elif_clause"
-              }
-            }
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "STRING",
-              "value": "\n"
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "alternative_catchall",
-            "content": {
-              "type": "SYMBOL",
-              "name": "else_clause"
+              "name": "elif_clause"
             }
           }
-        ]
-      }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "STRING",
+            "value": "\n"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "alternative_catchall",
+          "content": {
+            "type": "SYMBOL",
+            "name": "else_clause"
+          }
+        }
+      ]
     },
     "_if_else_stmt": {
-      "type": "PREC",
-      "value": 11,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "if"
-          },
-          {
-            "type": "FIELD",
-            "name": "condition",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_expression"
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "consequence",
-            "content": {
-              "type": "SYMBOL",
-              "name": "block"
-            }
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "STRING",
-              "value": "\n"
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "alternative_catchall",
-            "content": {
-              "type": "SYMBOL",
-              "name": "else_clause"
-            }
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "if"
+        },
+        {
+          "type": "FIELD",
+          "name": "condition",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_expression"
           }
-        ]
-      }
+        },
+        {
+          "type": "FIELD",
+          "name": "consequence",
+          "content": {
+            "type": "SYMBOL",
+            "name": "block"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "STRING",
+            "value": "\n"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "alternative_catchall",
+          "content": {
+            "type": "SYMBOL",
+            "name": "else_clause"
+          }
+        }
+      ]
     },
     "elif_clause": {
       "type": "SEQ",
@@ -4189,6 +4177,16 @@
     [
       "dict_kv",
       "expression_list"
+    ],
+    [
+      "_if_stmt",
+      "_if_elif_stmt",
+      "_if_else_stmt",
+      "_if_elif_else_stmt"
+    ],
+    [
+      "_if_elif_stmt",
+      "_if_elif_else_stmt"
     ]
   ],
   "precedences": [],

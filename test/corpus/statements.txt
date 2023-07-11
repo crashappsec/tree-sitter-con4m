@@ -83,6 +83,71 @@ else {
         (return_statement)))))
 
 ==================
+if with calls
+==================
+parts := split(env("PATH"), ":")
+if parts[0] == "" {
+    echo("foo")
+} elif parts[0] == "desired" {
+    echo("desired")
+}
+# foo
+echo("Not what I'm looking for: ", parts[0])
+
+---
+
+(source_file
+    (assignment_statement
+    (expression_list
+        (identifier))
+    (expression_list
+        (call_expression
+        (identifier)
+        (argument_list
+            (call_expression
+            (identifier)
+            (argument_list
+                (string_literal
+                (quoted_string))))
+            (string_literal
+            (quoted_string))))))
+    (if_statement
+    (binary_expression
+        (index_expression
+        (identifier)
+        (int_literal))
+        (string_literal
+        (quoted_string)))
+    (block
+        (call_expression
+        (identifier)
+        (argument_list
+            (string_literal
+            (quoted_string)))))
+    (elif_clause
+        (binary_expression
+        (index_expression
+            (identifier)
+            (int_literal))
+        (string_literal
+            (quoted_string)))
+        (block
+        (call_expression
+            (identifier)
+            (argument_list
+            (string_literal
+                (quoted_string)))))))
+    (comment)
+    (call_expression
+    (identifier)
+    (argument_list
+        (string_literal
+        (quoted_string))
+        (index_expression
+        (identifier)
+        (int_literal)))))
+
+==================
 for loop
 ==================
 
@@ -258,6 +323,74 @@ text := run("ls -l")
      (string_literal
       (quoted_string)))))))
 
+
+=======================
+attr mem
+=======================
+x.y.z = 10
+
+echo(string(x.y.z))
+---
+(source_file
+    (assignment_statement
+    (expression_list
+        (selector_expression
+        (selector_expression
+            (identifier)
+            (field_identifier
+            (field_identifier)))
+        (field_identifier
+            (field_identifier))))
+    (expression_list
+        (int_literal)))
+    (call_expression
+    (identifier)
+    (argument_list
+        (call_expression
+        (identifier)
+        (argument_list
+            (selector_expression
+            (selector_expression
+                (identifier)
+                (field_identifier
+                (field_identifier)))
+            (field_identifier
+                (field_identifier))))))))
+
+=======================
+enum statement
+=======================
+enum A, B, C, D, E, F, G
+
+func test() {
+  echo(format("The integer value for the enum val F is: {F}"))
+}
+
+test()
+---
+(source_file
+    (enum_declaration
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier)
+    (identifier))
+    (function_declaration
+    (identifier)
+    (block
+        (call_expression
+        (identifier)
+        (argument_list
+            (call_expression
+            (identifier)
+            (argument_list
+                (string_literal
+                (quoted_string))))))))
+    (call_expression
+    (identifier)
+    (argument_list)))
 
 =======================
 factorial
