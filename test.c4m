@@ -1,1 +1,11 @@
-text := run("ls -l")
+func fact(f) {
+  result := 1
+  for i from 1 to f {
+    result := result * i
+  }
+}
+
+for i from 1 to 10 {
+  x := fact(i)
+  echo (format("fact({i}) = {x}"))
+}

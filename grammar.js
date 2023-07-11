@@ -89,10 +89,13 @@ module.exports = grammar({
         optional(choice($._top_level_item))
       ),
 
-    _top_level_item: ($) => choice($._statement),
+    _top_level_item: ($) => choice($._statement, $._declaration),
+
+    _declaration: ($) => choice($.function_declaration),
 
     _statement: ($) =>
       choice(
+        $._expression,
         $.return_statement,
         $.if_statement,
         $.for_statement,
@@ -116,6 +119,8 @@ module.exports = grammar({
       choice(
         $.binary_expression,
         $.unary_expression,
+        $.selector_expression,
+        $.index_expression,
         $.call_expression,
         $.identifier,
         $.composite_literal,
@@ -134,6 +139,26 @@ module.exports = grammar({
         choice($.tuple_literal, $.list_literal, $.dict_literal)
       ),
 
+    selector_expression: ($) =>
+      prec(
+        PREC.primary,
+        seq(
+          field("operand", $._expression),
+          ".",
+          field("field", $._field_identifier)
+        )
+      ),
+
+    index_expression: ($) =>
+      prec(
+        PREC.primary,
+        seq(
+          field("operand", $._expression),
+          "[",
+          field("index", $._expression),
+          "]"
+        )
+      ),
     parenthesized_expression: ($) => seq("(", $._expression, ")"),
     expression_list: ($) => commaSep1($._expression),
 
@@ -261,6 +286,56 @@ module.exports = grammar({
       );
     },
 
+    base_type_spec: ($) =>
+      choice(
+        "void",
+        "bool",
+        "int",
+        "char",
+        "string",
+        "float",
+        "Duration",
+        "IpAddr",
+        "CIDR",
+        "Size",
+        "Date",
+        "Time",
+        "DateType",
+        seq("`", $.identifier),
+        seq("typespec", optional(seq("[", "`", $.identifier, "]"))),
+        seq("tuple", "[", $.type_spec_r, ",", repeat1($.type_spec_r), "]"),
+        seq("list", "[", $.type_spec_r, "]"),
+        seq("dict", "[", $.type_spec_r, ",", $.type_spec_r, "]")
+      ),
+
+    type_spec: ($) => choice($.base_type_spec, seq("func", $.func_spec)),
+    type_spec_r: ($) =>
+      choice($.base_type_spec, seq(optional("func"), $.func_spec)),
+
+    func_spec: ($) =>
+      seq(
+        "(",
+        $.type_spec_r,
+        repeat(seq(",", $.type_spec_r)),
+        optional(seq("*", $.type_spec_r)),
+        ")",
+        "->",
+        $.type_spec_r
+      ),
+
+    function_declaration: ($) =>
+      seq(
+        "func",
+        field("name", $.identifier),
+        field("parameters", seq("(", commaSep($.param_spec), ")")),
+        field("body", $.block)
+      ),
+    param_spec: ($) =>
+      seq(
+        field("param", $.identifier),
+        field("param_type", optional(seq(":", $.type_spec)))
+      ),
+
     comment: ($) =>
       token(
         choice(
@@ -277,7 +352,7 @@ module.exports = grammar({
       seq("(", $._expression, repeat1(seq(",", $._expression)), ")"),
 
     list_literal: ($) => seq("[", commaSep($._expression), "]"),
-    dict_literal: ($) => seq("{", commaSep($.dict_kv), "}"),
+    dict_literal: ($) => seq("{", commaSep1($.dict_kv), "}"),
     dict_kv: ($) =>
       seq(field("key", $._expression), ":", field("value", $._expression)),
 
@@ -311,6 +386,7 @@ module.exports = grammar({
     string_literal: ($) => choice($.quoted_string, $.multiline_string),
 
     identifier: ($) => /[_\p{XID_Start}][_\p{XID_Continue}]*/,
+    _field_identifier: ($) => alias($.identifier, $.field_identifier),
   },
 });
 

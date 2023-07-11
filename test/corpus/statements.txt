@@ -165,3 +165,160 @@ user_priorities =
             (string_literal
                 (quoted_string))
             (int_literal)))))))
+
+=======================
+composite literals accessors
+=======================
+
+my_path = ["/home/viega/bin", "/usr/sbin", "/usr/bin", "."]
+user_priorities = { "john@crashoverride.com" : 5,
+                    "mark@crashoverride.com" : 1,
+                    "theo@crashoverride.com" : 10
+                   }
+for i from 0 to len(my_path) {
+  echo(my_path[i])
+}
+
+echo(user_priorities["john@crashoverride.com"])
+
+---
+
+    (source_file
+      (assignment_statement
+        (expression_list
+          (identifier))
+        (expression_list
+          (composite_literal
+            (list_literal
+              (string_literal
+                (quoted_string))
+              (string_literal
+                (quoted_string))
+              (string_literal
+                (quoted_string))
+              (string_literal
+                (quoted_string))))))
+      (assignment_statement
+        (expression_list
+          (identifier))
+        (expression_list
+          (composite_literal
+            (dict_literal
+              (dict_kv
+                (string_literal
+                  (quoted_string))
+                (int_literal))
+              (dict_kv
+                (string_literal
+                  (quoted_string))
+                (int_literal))
+              (dict_kv
+                (string_literal
+                  (quoted_string))
+                (int_literal))))))
+      (for_statement
+        (identifier)
+        (for_range_clause
+          (int_literal)
+          (call_expression
+            (identifier)
+            (argument_list
+              (identifier))))
+        (block
+          (call_expression
+            (identifier)
+            (argument_list
+              (index_expression
+                (identifier)
+                (identifier))))))
+      (call_expression
+        (identifier)
+        (argument_list
+          (index_expression
+            (identifier)
+            (string_literal
+              (quoted_string))))))
+
+=======================
+call statement
+=======================
+
+text := run("ls -l")
+
+---
+
+(source_file
+ (assignment_statement
+  (expression_list
+   (identifier))
+  (expression_list
+   (call_expression
+    (identifier)
+    (argument_list
+     (string_literal
+      (quoted_string)))))))
+
+
+=======================
+function call fact
+=======================
+func fact(f) {
+  result := 1
+  for i from 1 to f {
+    result := result * i
+  }
+}
+
+for i from 1 to 10 {
+  x := fact(i)
+  echo (format("fact({i}) = {x}"))
+}
+
+---
+
+(source_file
+    (function_declaration
+    (identifier)
+    (param_spec
+        (identifier))
+    (block
+        (assignment_statement
+        (expression_list
+            (identifier))
+        (expression_list
+            (int_literal)))
+        (for_statement
+        (identifier)
+        (for_range_clause
+            (int_literal)
+            (identifier))
+        (block
+            (assignment_statement
+            (expression_list
+                (identifier))
+            (expression_list
+                (binary_expression
+                (identifier)
+                (identifier))))))))
+    (for_statement
+    (identifier)
+    (for_range_clause
+        (int_literal)
+        (int_literal))
+    (block
+        (assignment_statement
+        (expression_list
+            (identifier))
+        (expression_list
+            (call_expression
+            (identifier)
+            (argument_list
+                (identifier)))))
+        (call_expression
+        (identifier)
+        (argument_list
+            (call_expression
+            (identifier)
+            (argument_list
+                (string_literal
+                (quoted_string)))))))))
