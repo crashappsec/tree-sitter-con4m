@@ -31,7 +31,6 @@
 ; Identifiers
 
 (base_type_spec) @type
-(identifier) @variable
 
 ; Operators
 
@@ -88,6 +87,6 @@
 [
   (true)
   (false)
-] @constant.builtin
+] @boolean
 
 (comment) @comment
